@@ -17,6 +17,16 @@ import TextField from "@material-ui/core/TextField";
 import Typography from '@material-ui/core/Typography';
 import blue from '@material-ui/core/colors/blue';
 
+
+import CssBaseline from '@material-ui/core/CssBaseline';
+import FormControl from '@material-ui/core/FormControl';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
+import Paper from '@material-ui/core/Paper';
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+
 import dialogStyle from "assets/jss/material-dashboard-react/components/dialogStyle.js";
 
 const emails = ['username@gmail.com', 'user02@gmail.com'];
@@ -34,43 +44,48 @@ class SimpleDialog extends React.Component {
     const { classes, onClose, selectedValue, ...other } = this.props;
 
     return (
-      <Dialog onClose={this.handleClose} aria-labelledby="simple-dialog-title" {...other}>
-        <DialogTitle id="simple-dialog-title">Sign In</DialogTitle>
-        <div>
-          <List>
-
-            <ListItem>
-              <TextField
-                required
-                id="textfield-email"
-                label="Email"
-                className={classes.textField}
-                margin="normal"
-                variant="outlined"
-              />
-            </ListItem>
-
-            <ListItem>
-              <TextField
-                required
-                id="textfield-password"
-                label="Password"
-                className={classes.textField}
-                margin="normal"
-                variant="outlined"
-              />
-            </ListItem>
-
-            <ListItem>
-              <Button className={classes.buttonSignUp}>
-                Sign Up
-              </Button>
-              <Button variant="contained" color="primary" className={classes.buttonSignIn}>
-                Sign In
-              </Button>
-            </ListItem>
-
-          </List>
+      <Dialog onClose={this.handleClose} {...other}>
+        <div className={classes.main}>
+          <CssBaseline />
+            <Paper className={classes.paper}>
+              <Avatar className={classes.avatar}>
+                <LockOutlinedIcon />
+              </Avatar>
+              <Typography component="h1" variant="h5">
+                Sign in
+              </Typography>
+              <form className={classes.form}>
+                <FormControl margin="normal" required fullWidth>
+                  <InputLabel htmlFor="email">Email Address</InputLabel>
+                  <Input id="email" name="email" autoComplete="email" autoFocus />
+                </FormControl>
+                <FormControl margin="normal" required fullWidth>
+                  <InputLabel htmlFor="password">Password</InputLabel>
+                  <Input name="password" type="password" id="password" autoComplete="current-password" />
+                </FormControl>
+          
+          
+                <FormControlLabel
+                  control={<Checkbox value="remember" color="primary" />}
+                  label="Remember me"
+                />
+                <Button
+                  color="secondary"
+                  className={classes.buttonSignUp}
+                >
+                  Sign up
+                </Button>
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  className={classes.submit}
+                >
+                  Sign in
+                </Button>
+              </form>
+            </Paper>
         </div>
       </Dialog>
     );
