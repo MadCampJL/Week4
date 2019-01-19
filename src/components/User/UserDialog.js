@@ -17,15 +17,9 @@ import TextField from "@material-ui/core/TextField";
 import Typography from '@material-ui/core/Typography';
 import blue from '@material-ui/core/colors/blue';
 
-import dialogStyle from "assets/jss/material-dashboard-react/components/headerLinksStyle.jsx";
+import dialogStyle from "assets/jss/material-dashboard-react/components/dialogStyle.js";
 
 const emails = ['username@gmail.com', 'user02@gmail.com'];
-const styles = {
-  avatar: {
-    backgroundColor: blue[100],
-    color: blue[600],
-  },
-};
 
 class SimpleDialog extends React.Component {
   handleClose = () => {
@@ -68,13 +62,14 @@ class SimpleDialog extends React.Component {
             </ListItem>
 
             <ListItem>
-              <Button className={classes.button}>
+              <Button className={classes.buttonSignUp}>
                 Sign Up
               </Button>
-              <Button variant="contained" color="primary" className={classes.button}>
+              <Button variant="contained" color="primary" className={classes.buttonSignIn}>
                 Sign In
               </Button>
             </ListItem>
+
           </List>
         </div>
       </Dialog>
@@ -88,7 +83,7 @@ SimpleDialog.propTypes = {
   selectedValue: PropTypes.string,
 };
 
-const SimpleDialogWrapped = withStyles(styles)(SimpleDialog);
+const SimpleDialogWrapped = withStyles(dialogStyle)(SimpleDialog);
 
 class UserButton extends React.Component {
   state = {

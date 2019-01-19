@@ -1,4 +1,8 @@
-const dialogStyle = {
+import {
+  defaultFont,
+} from "assets/jss/material-dashboard-react.jsx";
+
+const dialogStyle = theme => ({
   container: {
     display: 'flex',
     flexWrap: 'wrap',
@@ -47,10 +51,20 @@ const dialogStyle = {
   button: {
     margin: theme.spacing.unit,
   },
+  buttonSignUp: {
+    margin: theme.spacing.unit,
+    // width: "12px",
+    // height: "8px",
+  },
+  buttonSignIn: {
+    margin: theme.spacing.unit,
+    // width: "32px",
+    // height: "24px",
+  },
   input: {
     display: 'none',
   },
 
-};
+});
 
 export default dialogStyle;
