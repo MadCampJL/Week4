@@ -22,6 +22,7 @@ import headerLinksStyle from "assets/jss/material-dashboard-react/components/hea
 
 import UserDialog from "../User/UserDialog";
 
+import FirebaseContext from "../Firebase"
 class HeaderLinks extends React.Component {
   state = {
     open: false
@@ -152,19 +153,7 @@ class HeaderLinks extends React.Component {
             )}
           </Poppers>
         </div>
-        <UserDialog />
-        {/* <Button
-          color={window.innerWidth > 959 ? "transparent" : "white"}
-          justIcon={window.innerWidth > 959}
-          simple={!(window.innerWidth > 959)}
-          aria-label="Person"
-          className={classes.buttonLink}
-        >
-          <Person className={classes.icons} />
-          <Hidden mdUp implementation="css">
-            <p className={classes.linkText}>Profile</p>
-          </Hidden>
-        </Button> */}
+        <UserDialog/>
       </div>
     );
   }

@@ -3,74 +3,114 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import ListItemText from '@material-ui/core/ListItemText';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
-import PersonIcon from '@material-ui/icons/Person';
-import AddIcon from '@material-ui/icons/Add';
 import Person from "@material-ui/icons/Person";
 import Hidden from "@material-ui/core/Hidden";
-import TextField from "@material-ui/core/TextField";
 import Typography from '@material-ui/core/Typography';
-import blue from '@material-ui/core/colors/blue';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import FormControl from '@material-ui/core/FormControl';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
+import Paper from '@material-ui/core/Paper';
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 
 import dialogStyle from "assets/jss/material-dashboard-react/components/dialogStyle.js";
 
-const emails = ['username@gmail.com', 'user02@gmail.com'];
+import { withFirebase } from "../Firebase";
 
 class SimpleDialog extends React.Component {
-  handleClose = () => {
-    this.props.onClose(this.props.selectedValue);
+
+  state = {
+    email: "",
+    password: ""
   };
 
-  handleListItemClick = value => {
-    this.props.onClose(value);
+  handleClose = () => {
+    this.props.onClose();
+  }
+
+  handleChange = (e) => {
+    this.setState({
+      [e.target.name]: e.target.value
+    });
+  };
+
+  handleSubmit = (e) => {
+    e.preventDefault();
+
+    const { email, password } = this.state;
+
+    this.props.firebase
+      .doCreateUserWithEmailAndPassword(email, password)
+      .then(authUser => {
+        console.log(authUser);
+        this.setState({ ...INITIAL_STATE })
+      })
+      .catch(error => {
+        console.log(error);
+        this.setState({ error })
+      })
+
+      this.handleClose();
   };
 
   render() {
-    const { classes, onClose, selectedValue, ...other } = this.props;
+    const { classes, onClose, ...other } = this.props;
+
+    const isInvalid =
+      this.state.email === '' ||
+      this.state.password === '' ||
+      this.state.email.indexOf('@') < 0 ||
+      this.state.email.indexOf('.') < this.state.email.indexOf('@');
 
     return (
-      <Dialog onClose={this.handleClose} aria-labelledby="simple-dialog-title" {...other}>
-        <DialogTitle id="simple-dialog-title">Sign In</DialogTitle>
-        <div>
-          <List>
+      <Dialog onClose={this.handleClose} {...other}>
+        <div className={classes.main}>
+          <CssBaseline />
+            <Paper className={classes.paper}>
+              <Avatar className={classes.avatar}>
+                <LockOutlinedIcon />
+              </Avatar>
+              <Typography component="h1" variant="h5">
+                Sign in
+              </Typography>
 
-            <ListItem>
-              <TextField
-                required
-                id="textfield-email"
-                label="Email"
-                className={classes.textField}
-                margin="normal"
-                variant="outlined"
-              />
-            </ListItem>
+              <form className={classes.form} onSubmit={this.handleSubmit}>
+                <FormControl margin="normal" required fullWidth>
+                  <InputLabel htmlFor="email">Email Address</InputLabel>
+                  <Input onChange={this.handleChange} id="email" name="email" autoComplete="email" autoFocus />
+                </FormControl>
+                <FormControl margin="normal" required fullWidth>
+                  <InputLabel htmlFor="password">Password</InputLabel>
+                  <Input onChange={this.handleChange} name="password" type="password" id="password" autoComplete="current-password" />
+                </FormControl>
+          
+                <FormControlLabel
+                  control={<Checkbox value="remember" color="primary" />}
+                  label="Remember me"
+                />
+                <Button
+                  color="secondary"
+                  className={classes.buttonSignUp}
+                >
+                  Sign up
+                </Button>
+                
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  disabled={isInvalid}
+                  className={classes.submit}
+                >
+                  Sign in
+                </Button>
+              </form>
 
-            <ListItem>
-              <TextField
-                required
-                id="textfield-password"
-                label="Password"
-                className={classes.textField}
-                margin="normal"
-                variant="outlined"
-              />
-            </ListItem>
-
-            <ListItem>
-              <Button className={classes.buttonSignUp}>
-                Sign Up
-              </Button>
-              <Button variant="contained" color="primary" className={classes.buttonSignIn}>
-                Sign In
-              </Button>
-            </ListItem>
-
-          </List>
+            </Paper>
         </div>
       </Dialog>
     );
@@ -83,13 +123,23 @@ SimpleDialog.propTypes = {
   selectedValue: PropTypes.string,
 };
 
-const SimpleDialogWrapped = withStyles(dialogStyle)(SimpleDialog);
+const SimpleDialogWrapped = withFirebase(withStyles(dialogStyle)(SimpleDialog));
+
+const INITIAL_STATE = {
+  open: false,
+  email: "",
+  password: "",
+  remember: false,
+  error: null,
+};
 
 class UserButton extends React.Component {
-  state = {
-    open: false,
-    selectedValue: emails[1],
-  };
+
+  constructor(props) {
+    super(props);
+
+    this.state = { ...INITIAL_STATE };
+  }
 
   handleClickOpen = () => {
     this.setState({
@@ -97,8 +147,10 @@ class UserButton extends React.Component {
     });
   };
 
-  handleClose = value => {
-    this.setState({ selectedValue: value, open: false });
+  handleClose = () => {
+    this.setState({
+      open: false,
+    });
   };
 
   render() {
@@ -106,7 +158,6 @@ class UserButton extends React.Component {
 
     return (
       <Fragment>
-        {/* <Typography variant="subtitle1">Selected: {this.state.selectedValue}</Typography> */}
         <Button
           color={window.innerWidth > 959 ? "transparent" : "white"}
           justIcon={window.innerWidth > 959}
@@ -121,7 +172,6 @@ class UserButton extends React.Component {
           </Hidden>
         </Button>
         <SimpleDialogWrapped
-          selectedValue={this.state.selectedValue}
           open={this.state.open}
           onClose={this.handleClose}
         />
