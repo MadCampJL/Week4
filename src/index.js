@@ -9,6 +9,7 @@ import Firebase, { FirebaseContext } from "./components/Firebase";
 
 ReactDOM.render(
   <FirebaseContext.Provider value={new Firebase()}>
+    
     <BrowserRouter>
       <Switch>
         {indexRoutes.map((prop, key) => {
