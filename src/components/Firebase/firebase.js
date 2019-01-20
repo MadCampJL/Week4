@@ -2,6 +2,7 @@ import app from "firebase/app";
 import "firebase/auth";
 import "firebase/database";
 import "firebase/firestore";
+import "firebase/storage";
 
 let config = {
   apiKey: "AIzaSyBu6shvyujL6MApuB2DWu-_q2QW__c13sw",
@@ -18,6 +19,7 @@ class Firebase {
 
     this.auth = app.auth();
     this.db = app.firestore();
+    this.storage = app.storage();
   }
 
   // Auth API
