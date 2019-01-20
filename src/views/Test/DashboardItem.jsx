@@ -10,14 +10,37 @@ import CardIcon from "components/Card/CardIcon.jsx";
 import CardBody from "components/Card/CardBody.jsx";
 import CardFooter from "components/Card/CardFooter.jsx";
 
+import { withFirebase } from "../../components/Firebase";
+
 class DashboardItem extends Component {
+
+  state = {
+    url: "",
+  };
+
+  componentDidMount() {
+    this.props.firebase.storage
+      .refFromURL(this.props.imgUrl)
+      .getDownloadURL()
+      .then(function(url) {
+
+        this.setState({
+          url,
+        })
+
+    }.bind(this)).catch(function(error) {
+      // Handle any errors
+      console.log(error);
+    });
+  }
+
   render() {
-    const { classes, imgUrl, workTitle, keykey } = this.props;
+    const { classes, workTitle, keykey } = this.props;
     return (
           <GridItem xs={12} sm={12} md={4}>
             <Card>
               <CardBody>
-                <img src={imgUrl} width="100%" alt="" />
+                <img src={this.state.url} width="100%" alt="" />
                 <h4 className={classes.cartTitle}>{workTitle}</h4>
                 <p className={classes.cardCategory}>
                   {keykey}
@@ -32,4 +55,4 @@ class DashboardItem extends Component {
   }
 }
 
-export default withStyles(dashboardStyle)(DashboardItem);
+export default withFirebase(withStyles(dashboardStyle)(DashboardItem));

@@ -100,7 +100,7 @@ class Test extends React.Component {
     const { classes } = this.props;
     console.log("render workArray: ", workArray);
     const workList = workArray.map(
-      info => (<DashboardItem imgUrl={info.thumbnail} workTitle={info.name} keykey={info.id}/>)
+      info => (<DashboardItem imgUrl={info.thumbnail} workTitle={info.name} keykey={info.id} key={info.id}/>)
     );
     console.log(workList);
     return (
