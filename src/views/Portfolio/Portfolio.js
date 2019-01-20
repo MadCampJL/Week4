@@ -55,7 +55,10 @@ class Portfolio extends React.Component {
             });
 
         } else {
-          this.setState({ authUser: null });
+          workArray = [];
+          this.setState({
+            authUser: null,
+          });
         }
       }
     );

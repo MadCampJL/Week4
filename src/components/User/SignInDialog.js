@@ -130,6 +130,7 @@ class SignInDialog extends React.Component {
                 </Button>
                 
                 <Button
+                  type="submit"
                   onClick={this.handleSignIn}
                   fullWidth
                   variant="contained"
