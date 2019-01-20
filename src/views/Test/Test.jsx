@@ -11,9 +11,7 @@ import CardIcon from "components/Card/CardIcon.jsx";
 import CardBody from "components/Card/CardBody.jsx";
 import CardFooter from "components/Card/CardFooter.jsx";
 import Selectbar from "components/SelectBar/Selectbar.jsx";
-
-import Firebase from "../../components/Firebase/firebase.js";
-
+import { withFirebase } from "../../components/Firebase";
 class Test extends React.Component {
   state = {
     value: 0,
@@ -44,7 +42,8 @@ class Test extends React.Component {
 
   addUser = e => {
     e.preventDefault();
-    const db = Firebase.firestore();
+    const db = this.props.firebase.db;
+    console.log(db);
     db.settings({
       timestampsInSnapshots: true
     });
@@ -111,4 +110,4 @@ class Test extends React.Component {
   }
 }
 
-export default withStyles(dashboardStyle)(Test);
+export default withFirebase(withStyles(dashboardStyle)(Test));
