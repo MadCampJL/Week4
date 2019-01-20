@@ -62,6 +62,11 @@ class Portfolio extends React.Component {
       
   }
 
+  componentWillUnmount() {
+    this.listner();
+  }
+
+
   handleChange = (event, value) => {
     this.setState({ value });
   };
@@ -85,14 +90,16 @@ class Portfolio extends React.Component {
     const { classes } = this.props;
 
     const workList = workArray.map(
-      info => (<WorkItem data={info} key={info.id}/>)
+      info => (<WorkItem
+                  visibility={ this.state.type == "all"
+                    || info.type == this.state.type }
+                  data={info}
+                  key={info.id}
+                />)
     );
 
     return (
       <div>
-        <div>
-          <h3>parent: {this.state.type}</h3>
-        </div>
         <Selectbar onCreate={this.handleChangeType} />
 
         <hr/>

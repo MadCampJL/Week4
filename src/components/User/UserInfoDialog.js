@@ -50,6 +50,10 @@ class UserInfoDialog extends React.Component {
       }
     )
   }
+  
+  componentWillUnmount() {
+    this.listner();
+  }
 
   handleLogout = () => {
     this.props.firebase.doSignOut();
