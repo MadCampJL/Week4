@@ -22,6 +22,7 @@ import { withFirebase } from "../Firebase";
 const INITIAL_STATE = {
   email: "",
   password: "",
+  error: ""
 };
 
 class SignInDialog extends React.Component {
@@ -53,13 +54,13 @@ class SignInDialog extends React.Component {
       .then(authUser => {
         this.props.firebase
           .doRecordUser(authUser, email, password);
+        this.handleClose();
       })
       .catch(error => {
         console.log(error);
         this.setState({ error })
       })
-
-      this.handleClose();
+      
   };
 
   handleSignIn = (e) => {
@@ -71,13 +72,14 @@ class SignInDialog extends React.Component {
       .doSignInWithEmailAndPassword(email, password)
       .then(authUser => {
         this.setState({ ...INITIAL_STATE })
+        this.handleClose();
       })
       .catch(error => {
         console.log(error);
         this.setState({ error });
       })
 
-      this.handleClose();
+      
   };
 
   render() {
@@ -110,6 +112,10 @@ class SignInDialog extends React.Component {
                   <InputLabel htmlFor="password">Password</InputLabel>
                   <Input onChange={this.handleChange} name="password" type="password" id="password" autoComplete="current-password" />
                 </FormControl>
+
+                <Typography component="h1" color="error">
+                  {this.state.error ? this.state.error.message : "" }
+                </Typography>
           
                 <FormControlLabel
                   control={<Checkbox value="remember" color="primary" />}
