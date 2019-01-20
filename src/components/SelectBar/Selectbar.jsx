@@ -47,7 +47,6 @@ class Selectbar extends React.Component {
 
     return (
       <form className={classes.root} autoComplete="off">
-      <div><h4>child: {this.state.type}</h4></div>
         <FormControl className={classes.formControl}>
           <InputLabel htmlFor="selectbar_type">Type</InputLabel>
           <Select

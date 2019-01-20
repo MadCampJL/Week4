@@ -13,45 +13,47 @@ import CardFooter from "components/Card/CardFooter.jsx";
 import { withFirebase } from "../../components/Firebase";
 
 class DashboardItem extends Component {
-
   state = {
-    url: "",
+    url: ""
   };
 
   componentDidMount() {
     this.props.firebase.storage
       .refFromURL(this.props.imgUrl)
       .getDownloadURL()
-      .then(function(url) {
-
-        this.setState({
-          url,
-        })
-
-    }.bind(this)).catch(function(error) {
-      // Handle any errors
-      console.log(error);
-    });
+      .then(
+        function(url) {
+          this.setState({
+            url
+          });
+        }.bind(this)
+      )
+      .catch(function(error) {
+        // Handle any errors
+        console.log(error);
+      });
   }
 
   render() {
-    const { classes, workTitle} = this.props;
-    return (
-          <GridItem xs={12} sm={12} md={4}>
-            <Card>
-              <CardBody>
-                <img src={this.state.url} width="100%" alt="" />
-                <h4 className={classes.cartTitle}>{workTitle}</h4>
-                <p className={classes.cardCategory}>
-                  cardCategory
-                </p>
-              </CardBody>
-              <CardFooter>
-                <div className={classes.stats}>campaign sent 2 days ago</div>
-              </CardFooter>
-            </Card>
-          </GridItem>
-    );
+    const { classes, workTitle, description, visibility } = this.props;
+    if (visibility == true) {
+      return (
+        <GridItem xs={12} sm={6} md={3}>
+          <Card>
+            <CardBody>
+              <img src={this.state.url} width="100%" alt="" />
+              <h4 className={classes.cartTitle}>{workTitle}</h4>
+              <p className={classes.cardCategory}>{description}</p>
+            </CardBody>
+            <CardFooter>
+              <div className={classes.stats}>campaign sent 2 days ago</div>
+            </CardFooter>
+          </Card>
+        </GridItem>
+      );
+    } else {
+      return null;
+    }
   }
 }
 

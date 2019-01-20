@@ -3,13 +3,7 @@ import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 
 import dashboardStyle from "assets/jss/material-dashboard-react/views/dashboardStyle.jsx";
-import GridItem from "components/Grid/GridItem.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
-import Card from "components/Card/Card.jsx";
-import CardHeader from "components/Card/CardHeader.jsx";
-import CardIcon from "components/Card/CardIcon.jsx";
-import CardBody from "components/Card/CardBody.jsx";
-import CardFooter from "components/Card/CardFooter.jsx";
 import Selectbar from "components/SelectBar/Selectbar.jsx";
 
 import DashboardItem from "./DashboardItem.jsx";
@@ -24,23 +18,26 @@ class Test extends React.Component {
     type: "all",
     email: "",
     fullname: "",
-    loading: true,
+    loading: true
   };
 
   componentDidMount() {
+    workArray = [];
     const db = this.props.firebase.db;
     db.collection("works")
       .where("isRecent", "==", true)
       .get()
-      .then(function(querySnapshot) {
-        querySnapshot.forEach(function(doc) {
-          let tempdata = doc.data();
-          tempdata.id=doc.id;
-          workArray.push(tempdata);
-          console.log(doc.id, " => ", tempdata);
-        });
-        this.setState({ loading: false, });
-      }.bind(this))
+      .then(
+        function(querySnapshot) {
+          querySnapshot.forEach(function(doc) {
+            let tempdata = doc.data();
+            tempdata.id = doc.id;
+            workArray.push(tempdata);
+            console.log(doc.id, " => ", tempdata);
+          });
+          this.setState({ loading: false });
+        }.bind(this)
+      )
       .catch(function(error) {
         console.log("Error getting documents: ", error);
       });
@@ -98,22 +95,24 @@ class Test extends React.Component {
 
   render() {
     const { classes } = this.props;
-    console.log("render workArray: ", workArray);
-    const workList = workArray.map(
-      info => (<DashboardItem imgUrl={info.thumbnail} workTitle={info.name} key={info.id}/>)
-    );
-    console.log(workList);
+    const workList = workArray.map(info => (
+      <DashboardItem
+        visibility={ this.state.type == "all" || info.type == this.state.type }
+        imgUrl={info.thumbnail}
+        description={info.description}
+        workTitle={info.name}
+        key={info.id}
+      />
+    ));
     return (
       <div>
-        <div>
-          <h3>parent: {this.state.type}</h3>
-        </div>
+        <div />
         {/* 셀렉트바...... */}
         <Selectbar onCreate={this.handleChangeType} />
-        <button onClick={this.readExample}>
+        {/* <button onClick={this.readExample}>
           클릭하면 데이터베이스에서 읽는다!
-        </button>
-        <div>
+        </button> */}
+        {/* <div>
           <hr />
           <form onSubmit={this.addUser}>
             <input
@@ -133,30 +132,8 @@ class Test extends React.Component {
             <button type="submit">Submit</button>
           </form>
           <hr />
-        </div>
-        {/* <DashboardItem imgUrl="" workTitle="" /> */}
-        <GridContainer>
-          { workList }
-          <GridItem xs={12} sm={12} md={4}>
-            <Card>
-              <CardBody>
-                <img
-                  src="http://www.imgworlds.com/wp-content/uploads/2015/12/18-CONTACTUS-HEADER.jpg"
-                  width="100%"
-                  alt=""
-                />
-                <h4 className={classes.cardTitle}>Completed Tasks</h4>
-                <p className={classes.cardCategory}>
-                  Last Campaign Performance
-                </p>
-              </CardBody>
-              <CardFooter chart>
-                <div className={classes.stats}>campaign sent 2 days ago</div>
-              </CardFooter>
-            </Card>
-          </GridItem>
-        </GridContainer>
-        
+        </div> */}
+        <GridContainer>{workList}</GridContainer>
       </div>
     );
   }
