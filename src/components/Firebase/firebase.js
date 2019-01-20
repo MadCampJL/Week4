@@ -58,7 +58,6 @@ class Firebase {
     this.user(authUser.uid)
       .get()
       .then((doc) => {
-        console.log(doc);
         if (doc.exists) {
           resolve(doc.data())
         } else {

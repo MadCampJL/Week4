@@ -1,7 +1,3 @@
-import {
-  defaultFont,
-} from "assets/jss/material-dashboard-react.jsx";
-
 const dialogStyle = theme => ({
   container: {
     display: 'flex',

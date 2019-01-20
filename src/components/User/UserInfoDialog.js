@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
@@ -73,7 +73,7 @@ class UserInfoDialog extends React.Component {
                 <LockOutlinedIcon />
               </Avatar>
               <Typography component="h1" variant="display2">
-                Hello, {name}!
+                Welcome!
               </Typography>
               <TextField
                 id="outlined-userinfo-email"

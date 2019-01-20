@@ -12,15 +12,17 @@ import CardFooter from "components/Card/CardFooter.jsx";
 
 import { withFirebase } from "../../components/Firebase";
 
-class DashboardItem extends Component {
+class WorkItem extends Component {
 
   state = {
     url: "",
   };
 
   componentDidMount() {
-    this.props.firebase.storage
-      .refFromURL(this.props.imgUrl)
+    const {firebase, data} = this.props;
+
+    firebase.storage
+      .refFromURL(data.thumbnail)
       .getDownloadURL()
       .then(function(url) {
 
@@ -35,19 +37,21 @@ class DashboardItem extends Component {
   }
 
   render() {
-    const { classes, workTitle} = this.props;
+    const { classes } = this.props;
+    const { name, date, description } = this.props.data;
+
     return (
           <GridItem xs={12} sm={12} md={4}>
             <Card>
               <CardBody>
                 <img src={this.state.url} width="100%" alt="" />
-                <h4 className={classes.cartTitle}>{workTitle}</h4>
+                <h4 className={classes.cartTitle}>{name}</h4>
                 <p className={classes.cardCategory}>
-                  cardCategory
+                  {description}
                 </p>
               </CardBody>
               <CardFooter>
-                <div className={classes.stats}>campaign sent 2 days ago</div>
+                <div className={classes.stats}>{date}</div>
               </CardFooter>
             </Card>
           </GridItem>
@@ -55,4 +59,4 @@ class DashboardItem extends Component {
   }
 }
 
-export default withFirebase(withStyles(dashboardStyle)(DashboardItem));
+export default withFirebase(withStyles(dashboardStyle)(WorkItem));

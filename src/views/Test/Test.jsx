@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 // @material-ui/core
 import withStyles from "@material-ui/core/styles/withStyles";
 
@@ -100,7 +100,7 @@ class Test extends React.Component {
     const { classes } = this.props;
     console.log("render workArray: ", workArray);
     const workList = workArray.map(
-      info => (<DashboardItem imgUrl={info.thumbnail} workTitle={info.name} keykey={info.id} key={info.id}/>)
+      info => (<DashboardItem imgUrl={info.thumbnail} workTitle={info.name} key={info.id}/>)
     );
     console.log(workList);
     return (

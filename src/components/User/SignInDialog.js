@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
@@ -35,7 +35,7 @@ class SignInDialog extends React.Component {
 
 
   handleClose = () => {
-    this.state = { ...INITIAL_STATE };
+    this.setState({...INITIAL_STATE});
     this.props.onClose();
   }
 
