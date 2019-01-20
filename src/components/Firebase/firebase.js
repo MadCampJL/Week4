@@ -36,7 +36,21 @@ class Firebase {
     this.auth.currentUser.updatePassword(password);
 
   // User API
+  user = uid => this.db.collection('users').doc(uid);
+  users = () => this.db.collection('users');
 
+  doRecordUser = (authUser, email, password)=> 
+  this.user(authUser.user.uid)
+      .set({
+        email,
+        password,
+      })
+      .then(()=>{
+        console.log('New user added to database!');
+      })
+      .catch((error)=>{
+        console.log(error);
+      });
 }
 
 export default Firebase;
