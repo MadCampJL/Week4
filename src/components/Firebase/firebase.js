@@ -39,18 +39,39 @@ class Firebase {
   user = uid => this.db.collection('users').doc(uid);
   users = () => this.db.collection('users');
 
-  doRecordUser = (authUser, email, password)=> 
-  this.user(authUser.user.uid)
-      .set({
-        email,
-        password,
+  doRecordUser = (authUser, email, password) => 
+    this.user(authUser.user.uid)
+        .set({
+          email,
+          password,
+        })
+        .then(()=>{
+          console.log('New user added to database!');
+        })
+        .catch((error)=>{
+          console.log(error);
+        });
+
+  getUserInfo = (authUser) => new Promise((resolve, reject) => {
+    this.user(authUser.uid)
+      .get()
+      .then((doc) => {
+        console.log(doc);
+        if (doc.exists) {
+          resolve(doc.data())
+        } else {
+            // doc.data() will be undefined in this case
+          console.log("No such document!");
+          reject();
+        }
       })
-      .then(()=>{
-        console.log('New user added to database!');
-      })
-      .catch((error)=>{
+      .catch((error) => {
         console.log(error);
+        reject();
       });
+  });
+    
+
 }
 
 export default Firebase;

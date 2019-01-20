@@ -1,11 +1,7 @@
 import React, { Fragment } from 'react';
-import PropTypes from 'prop-types';
+
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import Avatar from '@material-ui/core/Avatar';
-import Dialog from '@material-ui/core/Dialog';
-import Person from "@material-ui/icons/Person";
-import Hidden from "@material-ui/core/Hidden";
 import Typography from '@material-ui/core/Typography';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import FormControl from '@material-ui/core/FormControl';
@@ -15,17 +11,27 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import Paper from '@material-ui/core/Paper';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import Avatar from '@material-ui/core/Avatar';
+import Dialog from '@material-ui/core/Dialog';
+import PropTypes from 'prop-types';
 
 import dialogStyle from "assets/jss/material-dashboard-react/components/dialogStyle.js";
 
 import { withFirebase } from "../Firebase";
 
-class SimpleDialog extends React.Component {
+const INITIAL_STATE = {
+  email: "",
+  password: "",
+};
 
-  state = {
-    email: "",
-    password: ""
-  };
+class SignInDialog extends React.Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = { ...INITIAL_STATE };
+  }
+
 
   handleClose = () => {
     this.props.onClose();
@@ -45,7 +51,6 @@ class SimpleDialog extends React.Component {
     this.props.firebase
       .doCreateUserWithEmailAndPassword(email, password)
       .then(authUser => {
-        console.log(authUser);
         this.props.firebase
           .doRecordUser(authUser, email, password);
       })
@@ -65,7 +70,6 @@ class SimpleDialog extends React.Component {
     this.props.firebase
       .doSignInWithEmailAndPassword(email, password)
       .then(authUser => {
-        console.log(authUser);
         this.setState({ ...INITIAL_STATE })
       })
       .catch(error => {
@@ -93,7 +97,7 @@ class SimpleDialog extends React.Component {
               <Avatar className={classes.avatar}>
                 <LockOutlinedIcon />
               </Avatar>
-              <Typography component="h1" variant="h5">
+              <Typography component="h1" variant="display2">
                 Sign in
               </Typography>
 
@@ -138,67 +142,9 @@ class SimpleDialog extends React.Component {
   }
 }
 
-SimpleDialog.propTypes = {
+SignInDialog.propTypes = {
   classes: PropTypes.object.isRequired,
   onClose: PropTypes.func,
-  selectedValue: PropTypes.string,
 };
 
-const SimpleDialogWrapped = withFirebase(withStyles(dialogStyle)(SimpleDialog));
-
-const INITIAL_STATE = {
-  open: false,
-  email: "",
-  password: "",
-  remember: false,
-  error: null,
-};
-
-class UserButton extends React.Component {
-
-  constructor(props) {
-    super(props);
-
-    this.state = { ...INITIAL_STATE };
-  }
-
-  handleClickOpen = () => {
-    this.setState({
-      open: true,
-    });
-  };
-
-  handleClose = () => {
-    this.setState({
-      open: false,
-    });
-  };
-
-  render() {
-    const { classes } = this.props;
-
-    return (
-      <Fragment>
-        <Button
-          color={window.innerWidth > 959 ? "transparent" : "white"}
-          justIcon={window.innerWidth > 959}
-          simple={!(window.innerWidth > 959)}
-          aria-label="Person"
-          className={classes.buttonLink}
-          onClick={this.handleClickOpen}
-          >
-          <Person className={classes.icons} />
-          <Hidden mdUp implementation="css">
-            <p className={classes.linkText}>Profile</p>
-          </Hidden>
-        </Button>
-        <SimpleDialogWrapped
-          open={this.state.open}
-          onClose={this.handleClose}
-        />
-      </Fragment>
-    );
-  }
-}
-
-export default withStyles(dialogStyle)(UserButton);
+export default withFirebase(withStyles(dialogStyle)(SignInDialog));
