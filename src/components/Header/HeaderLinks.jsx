@@ -20,9 +20,8 @@ import Button from "components/CustomButtons/Button.jsx";
 
 import headerLinksStyle from "assets/jss/material-dashboard-react/components/headerLinksStyle.jsx";
 
-import UserDialog from "../User/UserDialog";
+import UserButton from "../User/UserButton";
 
-import FirebaseContext from "../Firebase"
 class HeaderLinks extends React.Component {
   state = {
     open: false
@@ -153,7 +152,7 @@ class HeaderLinks extends React.Component {
             )}
           </Poppers>
         </div>
-        <UserDialog/>
+        <UserButton/>
       </div>
     );
   }
