@@ -41,7 +41,7 @@ class SimpleDialog extends React.Component {
     e.preventDefault();
 
     const { email, password } = this.state;
-
+    
     this.props.firebase
       .doCreateUserWithEmailAndPassword(email, password)
       .then(authUser => {

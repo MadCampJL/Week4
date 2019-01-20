@@ -11,11 +11,13 @@ import CardIcon from "components/Card/CardIcon.jsx";
 import CardBody from "components/Card/CardBody.jsx";
 import CardFooter from "components/Card/CardFooter.jsx";
 import Selectbar from "components/SelectBar/Selectbar.jsx";
-
+import { withFirebase } from "../../components/Firebase";
 class Test extends React.Component {
   state = {
     value: 0,
     type : 'all',
+    email: "",
+    fullname: "",
   };
 
 
@@ -32,6 +34,29 @@ class Test extends React.Component {
       this.setState({ type : type_select });
   }
 
+  updateInput = e => {
+    this.setState({
+      [e.target.name]: e.target.value
+    });
+  }
+
+  addUser = e => {
+    e.preventDefault();
+    const db = this.props.firebase.db;
+    console.log(db);
+    db.settings({
+      timestampsInSnapshots: true
+    });
+    const userRef = db.collection("users").add({
+      fullname: this.state.fullname,
+      email: this.state.email
+    });
+    this.setState({
+      fullname: "",
+      email: ""
+    })
+  }
+
   render() {
     const { classes } = this.props;
     return (
@@ -39,6 +64,27 @@ class Test extends React.Component {
         <div><h3>parent: {this.state.type}</h3></div>
         {/* 셀렉트바...... */}
         <Selectbar onCreate={this.handleChangeType} />
+
+        <div><hr/>
+        <form onSubmit={this.addUser}>
+          <input
+            type="text"
+            name="fullname"
+            placeholder="Full name"
+            onChange={this.updateInput}
+            value={this.state.fullname}
+          />
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            onChange={this.updateInput}
+            value={this.state.email}
+          />
+          <button type="submit">Submit</button>
+        </form><hr/>
+      </div>
+
         <GridContainer>
           <GridItem xs={12} sm={6} md={3}>
             <Card>
@@ -64,4 +110,4 @@ class Test extends React.Component {
   }
 }
 
-export default withStyles(dashboardStyle)(Test);
+export default withFirebase(withStyles(dashboardStyle)(Test));
