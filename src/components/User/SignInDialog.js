@@ -35,6 +35,7 @@ class SignInDialog extends React.Component {
 
 
   handleClose = () => {
+    this.state = { ...INITIAL_STATE };
     this.props.onClose();
   }
 
@@ -71,7 +72,6 @@ class SignInDialog extends React.Component {
     this.props.firebase
       .doSignInWithEmailAndPassword(email, password)
       .then(authUser => {
-        this.setState({ ...INITIAL_STATE })
         this.handleClose();
       })
       .catch(error => {
