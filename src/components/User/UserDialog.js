@@ -37,7 +37,7 @@ class SimpleDialog extends React.Component {
     });
   };
 
-  handleSubmit = (e) => {
+  handleSignUp = (e) => {
     e.preventDefault();
 
     const { email, password } = this.state;
@@ -51,6 +51,25 @@ class SimpleDialog extends React.Component {
       .catch(error => {
         console.log(error);
         this.setState({ error })
+      })
+
+      this.handleClose();
+  };
+
+  handleSignIn = (e) => {
+    e.preventDefault();
+
+    const { email, password } = this.state;
+
+    this.props.firebase
+      .doSignInWithEmailAndPassword(email, password)
+      .then(authUser => {
+        console.log(authUser);
+        this.setState({ ...INITIAL_STATE })
+      })
+      .catch(error => {
+        console.log(error);
+        this.setState({ error });
       })
 
       this.handleClose();
@@ -77,7 +96,7 @@ class SimpleDialog extends React.Component {
                 Sign in
               </Typography>
 
-              <form className={classes.form} onSubmit={this.handleSubmit}>
+              <form className={classes.form}>
                 <FormControl margin="normal" required fullWidth>
                   <InputLabel htmlFor="email">Email Address</InputLabel>
                   <Input onChange={this.handleChange} id="email" name="email" autoComplete="email" autoFocus />
@@ -92,6 +111,7 @@ class SimpleDialog extends React.Component {
                   label="Remember me"
                 />
                 <Button
+                  onClick={this.handleSignUp}
                   color="secondary"
                   className={classes.buttonSignUp}
                 >
@@ -99,7 +119,7 @@ class SimpleDialog extends React.Component {
                 </Button>
                 
                 <Button
-                  type="submit"
+                  onClick={this.handleSignIn}
                   fullWidth
                   variant="contained"
                   color="primary"

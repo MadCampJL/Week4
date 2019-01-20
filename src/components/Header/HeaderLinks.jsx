@@ -22,7 +22,6 @@ import headerLinksStyle from "assets/jss/material-dashboard-react/components/hea
 
 import UserDialog from "../User/UserDialog";
 
-import FirebaseContext from "../Firebase"
 class HeaderLinks extends React.Component {
   state = {
     open: false
