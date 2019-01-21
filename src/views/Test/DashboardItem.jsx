@@ -2,7 +2,7 @@
 import withStyles from "@material-ui/core/styles/withStyles";
 
 import dashboardStyle from "assets/jss/material-dashboard-react/views/dashboardStyle.jsx";
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import GridItem from "components/Grid/GridItem.jsx";
 import Card from "components/Card/Card.jsx";
 import CardHeader from "components/Card/CardHeader.jsx";
@@ -17,29 +17,26 @@ import { withFirebase } from "../../components/Firebase";
 class DashboardItem extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       url: "",
-      work_info_open: false
+      workInfoOpen: false,
+      wtf: false,
     };
-    this.toggleWorkInfo = this.toggleWorkInfo.bind(this);
-  }
-
-  toggleWorkInfo() {
-    this.setState(state => ({
-      work_info_open: !state.work_info_open
-    }));
   }
 
   handleWorkInfoOpen = () => {
     this.setState({
-      work_info_open: true,
+      workInfoOpen: true,
+      wtf: true
     });
   }
 
   handleWorkInfoClose = () => {
     this.setState({
-      work_info_open: false,
-    })
+      workInfoOpen: false,
+      wtf: false
+    });
   }
 
   componentDidMount() {
@@ -63,25 +60,29 @@ class DashboardItem extends Component {
     const { classes, visibility, info } = this.props;
     if (visibility == true) {
       return (
-        <GridItem xs={12} sm={6} md={3} onClick={this.handleWorkInfoOpen}>
-          <Card>
-            <CardBody>
-              <img src={this.state.url} width="100%" alt="" />
-              <h4 className={classes.cartTitle}>{info.name}</h4>
-              <p className={classes.cardCategory}>{info.description}</p>
-            </CardBody>
-            <CardFooter>
-              <div className={classes.stats}>campaign sent 2 days ago</div>
-            </CardFooter>
-          </Card>
-          {this.state.work_info_open ?
+        <Fragment>
+          <GridItem xs={12} sm={6} md={3} onClick={this.handleWorkInfoOpen}>
+            <Card>
+              <CardBody>
+                <img src={this.state.url} width="100%" alt="" />
+                <h4 className={classes.cartTitle}>{info.name}</h4>
+                <p className={classes.cardCategory}>{info.description}</p>
+              </CardBody>
+              <CardFooter>
+                <div className={classes.stats}>campaign sent 2 days ago</div>
+              </CardFooter>
+            </Card>
+            
+          </GridItem>
+          {this.state.workInfoOpen ?
           <WorkInfo
-            open={this.state.work_info_open}
+            open={this.state.workInfoOpen}
             onClose={this.handleWorkInfoClose}
-            info={info}/> : null
+            info={info}
+            />
+          : null
           }
-          
-        </GridItem>
+        </Fragment>
       );
     } else {
       return null;

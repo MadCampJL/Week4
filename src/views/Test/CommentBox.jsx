@@ -74,9 +74,6 @@ class CommentBox extends React.Component {
       alert("Please try again after logging in");
     } else {
       const db = this.props.firebase.db;
-      db.settings({
-          timestampsInSnapshots: true
-      });
       var dayNames = ['(Sun)', '(Mon)', '(Tue)', '(Wed)', '(Thu)', '(Fri)', '(Sat)'];
       let today = new Date();
       let day = dayNames[today.getDay()];

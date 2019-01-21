@@ -142,7 +142,6 @@ class WorkInfo extends React.Component {
       </div>
     ));
     return (
-      <div>
         <Dialog
           open={this.props.open}
           onClose={this.handleClose}
@@ -181,7 +180,6 @@ class WorkInfo extends React.Component {
             </main>
           </DialogContent>
         </Dialog>
-      </div>
     );
   }
 }

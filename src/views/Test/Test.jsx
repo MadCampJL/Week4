@@ -18,7 +18,7 @@ class Test extends React.Component {
     type: "all",
     email: "",
     fullname: "",
-    loading: true
+    loading: true,
   };
 
   componentDidMount() {
