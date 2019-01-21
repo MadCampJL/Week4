@@ -1,6 +1,7 @@
+import { runInThisContext } from "vm";
+
 const uploadDialogStyle = theme => ({
   layout: {
-    width: "auto",
     marginLeft: theme.spacing.unit * 2,
     marginRight: theme.spacing.unit * 2,
     [theme.breakpoints.up(800 + theme.spacing.unit * 2 * 2)]: {
@@ -19,12 +20,30 @@ const uploadDialogStyle = theme => ({
       padding: theme.spacing.unit * 3
     }
   },
+  typeSelect: {
+    margin : theme.spacing.unit,
+  },
+  type: {
+    marginLeft: theme.spacing.unit * 2,
+    marginRight: theme.spacing.unit * 2,
+  },
   stepper: {
     padding: `${theme.spacing.unit * 3}px 0 ${theme.spacing.unit * 5}px`
   },
   buttons: {
     display: "flex",
     justifyContent: "flex-end"
+  },
+  uploadTitle: {
+    margin: theme.spacing.unit,
+    width: "100%",
+  },
+  uploadButton: {
+    margin: theme.spacing.unit * 2,
+    marginLeft: theme.spacing.unit * 14,
+  },
+  uploadButtonIcon: {
+    marginLeft: theme.spacing.unit,
   },
   button: {
     marginTop: theme.spacing.unit * 3,
@@ -43,8 +62,7 @@ const uploadDialogStyle = theme => ({
     color: "#828282"
   },
   div_title: {
-    margin: "5%",
-    marginTop: "3%"
+    textAlign: "left",
   },
   textfieldmargin: {
     width: "90%",
@@ -78,7 +96,10 @@ const uploadDialogStyle = theme => ({
   addCommentBtn: {
     marginTop: "10px",
     marginRight: "5%"
-  }
+  },
+  margin: {
+    margin: theme.spacing.unit,
+  },
 });
 
 export default uploadDialogStyle;
