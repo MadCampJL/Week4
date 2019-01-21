@@ -74,10 +74,13 @@ class DashboardItem extends Component {
               <div className={classes.stats}>campaign sent 2 days ago</div>
             </CardFooter>
           </Card>
+          {this.state.work_info_open ?
           <WorkInfo
             open={this.state.work_info_open}
             onClose={this.handleWorkInfoClose}
-            info={info}/>
+            info={info}/> : null
+          }
+          
         </GridItem>
       );
     } else {

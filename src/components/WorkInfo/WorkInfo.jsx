@@ -137,8 +137,8 @@ class WorkInfo extends React.Component {
     const { classes, info } = this.props;
     let i = 0;
     const imageList = this.state.imageFiles.map(file => (
-      <div align="center">
-        <img width="90%" src={file} key={i++} alt={file} />
+      <div align="center" key={i++} >
+        <img width="90%" src={file} alt={file} />
       </div>
     ));
     return (
