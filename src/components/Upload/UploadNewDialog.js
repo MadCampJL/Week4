@@ -1,28 +1,44 @@
 import React from 'react';
 
-import { withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import CssBaseline from '@material-ui/core/CssBaseline';
 import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
 import Paper from '@material-ui/core/Paper';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Avatar from '@material-ui/core/Avatar';
+
+import { withStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import PropTypes from 'prop-types';
+
+import Grid from '@material-ui/core/Grid';
+import InputAdornment from '@material-ui/core/InputAdornment';
+
+import Chip from '@material-ui/core/Chip';
+import Avatar from '@material-ui/core/Avatar';
+
+import TitleIcon from '@material-ui/icons/BubbleChart';
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import WritingIcon from '@material-ui/icons/Create';
+import DrawingIcon from '@material-ui/icons/Brush';
+import PhotoIcon from '@material-ui/icons/PhotoCamera';
+import DesignIcon from '@material-ui/icons/Layers';
+import MusicIcon from '@material-ui/icons/MusicNote';
+import AttachIcon from '@material-ui/icons/AttachFile';
 
 import uploadDialogStyle from "assets/jss/material-dashboard-react/components/uploadDialogStyle";
 
 import { withFirebase } from "../Firebase";
+import { DialogContent, Divider } from '@material-ui/core';
 
 const INITIAL_STATE = {
-  email: "",
-  password: "",
-  error: ""
+  title: "",
+  type: "",
+  description: "",
+  commitMessage: "",
 };
 
 class UploadNewDialog extends React.Component {
@@ -44,6 +60,10 @@ class UploadNewDialog extends React.Component {
       [e.target.name]: e.target.value
     });
   };
+
+  handleUpload = (e) => {
+
+  }
 
   handleSignUp = (e) => {
     e.preventDefault();
@@ -83,47 +103,74 @@ class UploadNewDialog extends React.Component {
   render() {
     const { classes, onClose, ...other } = this.props;
 
-    const isInvalid =
-      this.state.email === '' ||
-      this.state.password === '' ||
-      this.state.email.indexOf('@') < 0 ||
-      this.state.email.indexOf('.') < this.state.email.indexOf('@');
-
     return (
-      <Dialog onClose={this.handleClose} {...other}>
-        <div className={classes.main}>
-          <CssBaseline />
-            <Paper className={classes.paper}>
+      <Dialog onClose={this.handleClose} maxWidth={false} {...other}>
+        <DialogContent>
+          <CssBaseline/>
+          <main className={classes.layout}>
 
-              <form className={classes.form}>
-                <FormControl margin="normal" required fullWidth>
-                  <InputLabel htmlFor="email">Email Address</InputLabel>
-                  <Input onChange={this.handleChange} id="email" name="email" autoComplete="email" autoFocus />
-                </FormControl>
-                <FormControl margin="normal" required fullWidth>
-                  <InputLabel htmlFor="password">Password</InputLabel>
-                  <Input onChange={this.handleChange} name="password" type="password" id="password" autoComplete="current-password" />
-                </FormControl>
-
-                <Typography component="h1" color="error">
-                  {this.state.error ? this.state.error.message : "" }
-                </Typography>
-                
-                <Button
-                  type="submit"
-                  onClick={this.handleSignIn}
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  disabled={isInvalid}
-                  className={classes.submit}
-                >
-                  Sign in
+            <div className={classes.div_title}>
+              <Grid container spacing={24}>
+                <Grid item xs={8}>
+                <TextField
+                  className={classes.uploadTitle}
+                  id="input-with-icon-textfield"
+                  label="Title"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <TitleIcon />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+                </Grid>
+                <Grid item xs={4}>
+                <Button variant="contained" color="primary" className={classes.uploadButton}>
+                  Upload
+                  <CloudUploadIcon className={classes.uploadButtonIcon} />
                 </Button>
-              </form>
+                </Grid>
+              </Grid>
+            </div>
 
-            </Paper>
-        </div>
+            <Divider/>
+
+            <div>
+              <Typography gutterBottom variant="caption" className={classes.typeSelect}>
+                Select type
+              </Typography>
+
+              <Grid container>
+                <Grid item xs={12} sm={2}>
+                  <Chip avatar={<Avatar><WritingIcon /></Avatar>} variant="outlined" className={classes.type} label="글" />
+                </Grid>
+                <Grid item xs={12} sm={2}>
+                  <Chip avatar={<Avatar><DrawingIcon /></Avatar>} variant="outlined" className={classes.type} label="그림" />
+                </Grid>
+                <Grid item xs={12} sm={2}>
+                  <Chip avatar={<Avatar><PhotoIcon /></Avatar>} variant="outlined" className={classes.type} label="사진" />
+                </Grid>
+                <Grid item xs={12} sm={2}>
+                <Chip avatar={<Avatar><DesignIcon /></Avatar>} variant="outlined" className={classes.type} label="디자인" />
+                </Grid>
+                <Grid item xs={12} sm={2}>
+                  <Chip avatar={<Avatar><MusicIcon /></Avatar>} variant="outlined" className={classes.type} label="음악" />
+                </Grid>
+                <Grid item xs={12} sm={2}>
+                  <Chip avatar={<Avatar><AttachIcon /></Avatar>} variant="outlined" className={classes.type} label="기타" />
+                </Grid>
+               
+              </Grid>
+            </div>
+
+            <Divider/>
+            
+            <div>
+
+            </div>
+          </main>
+        </DialogContent>
       </Dialog>
     );
   }
