@@ -102,6 +102,7 @@ class Test extends React.Component {
         description={info.description}
         workTitle={info.name}
         key={info.id}
+        info={info}
       />
     ));
     return (

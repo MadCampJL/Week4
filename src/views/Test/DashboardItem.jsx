@@ -10,12 +10,25 @@ import CardIcon from "components/Card/CardIcon.jsx";
 import CardBody from "components/Card/CardBody.jsx";
 import CardFooter from "components/Card/CardFooter.jsx";
 
+import WorkInfo from "../../components/WorkInfo/WorkInfo.jsx";
+
 import { withFirebase } from "../../components/Firebase";
 
 class DashboardItem extends Component {
-  state = {
-    url: ""
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      url: "",
+      work_info_open: false
+    };
+    this.toggleWorkInfo = this.toggleWorkInfo.bind(this);
+  }
+
+  toggleWorkInfo() {
+    this.setState(state => ({
+      work_info_open: !state.work_info_open
+    }));
+  }
 
   componentDidMount() {
     this.props.firebase.storage
@@ -35,10 +48,10 @@ class DashboardItem extends Component {
   }
 
   render() {
-    const { classes, workTitle, description, visibility } = this.props;
+    const { classes, workTitle, description, visibility, info } = this.props;
     if (visibility == true) {
       return (
-        <GridItem xs={12} sm={6} md={3}>
+        <GridItem xs={12} sm={6} md={3} onClick={this.toggleWorkInfo}>
           <Card>
             <CardBody>
               <img src={this.state.url} width="100%" alt="" />
@@ -49,6 +62,7 @@ class DashboardItem extends Component {
               <div className={classes.stats}>campaign sent 2 days ago</div>
             </CardFooter>
           </Card>
+          <WorkInfo open={this.state.work_info_open} description={description} imgUrl={this.props.imgUrl} workTitle={workTitle} info={info}/>
         </GridItem>
       );
     } else {
