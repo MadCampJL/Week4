@@ -30,6 +30,18 @@ class DashboardItem extends Component {
     }));
   }
 
+  handleWorkInfoOpen = () => {
+    this.setState({
+      work_info_open: true,
+    });
+  }
+
+  handleWorkInfoClose = () => {
+    this.setState({
+      work_info_open: false,
+    })
+  }
+
   componentDidMount() {
     this.props.firebase.storage
       .refFromURL(this.props.imgUrl)
@@ -51,7 +63,7 @@ class DashboardItem extends Component {
     const { classes, workTitle, description, visibility, info } = this.props;
     if (visibility == true) {
       return (
-        <GridItem xs={12} sm={6} md={3} onClick={this.toggleWorkInfo}>
+        <GridItem xs={12} sm={6} md={3} onClick={this.handleWorkInfoOpen}>
           <Card>
             <CardBody>
               <img src={this.state.url} width="100%" alt="" />
@@ -62,7 +74,13 @@ class DashboardItem extends Component {
               <div className={classes.stats}>campaign sent 2 days ago</div>
             </CardFooter>
           </Card>
-          <WorkInfo open={this.state.work_info_open} description={description} imgUrl={this.props.imgUrl} workTitle={workTitle} info={info}/>
+          <WorkInfo
+            open={this.state.work_info_open}
+            onClose={this.handleWorkInfoClose}
+            description={description}
+            imgUrl={this.props.imgUrl}
+            workTitle={workTitle}
+            info={info}/>
         </GridItem>
       );
     } else {

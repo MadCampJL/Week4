@@ -15,7 +15,7 @@ import Avatar from '@material-ui/core/Avatar';
 import Dialog from '@material-ui/core/Dialog';
 import PropTypes from 'prop-types';
 
-import dialogStyle from "assets/jss/material-dashboard-react/components/dialogStyle.js";
+import uploadDialogStyle from "assets/jss/material-dashboard-react/components/uploadDialogStyle";
 
 import { withFirebase } from "../Firebase";
 
@@ -78,8 +78,6 @@ class UploadNewDialog extends React.Component {
         console.log(error);
         this.setState({ error });
       })
-
-      
   };
 
   render() {
@@ -136,4 +134,4 @@ UploadNewDialog.propTypes = {
   onClose: PropTypes.func,
 };
 
-export default withFirebase(withStyles(dialogStyle)(UploadNewDialog));
+export default withFirebase(withStyles(uploadDialogStyle)(UploadNewDialog));

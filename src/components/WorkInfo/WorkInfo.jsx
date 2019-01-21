@@ -97,7 +97,6 @@ const styles = theme => ({
 
 class WorkInfo extends React.Component {
   state = {
-    open: false,
     url: ""
   };
 
@@ -118,25 +117,14 @@ class WorkInfo extends React.Component {
       });
   }
 
-  handleClickOpen = () => {
-    this.setState({ open: true });
-  };
-
   handleClose = () => {
-    this.setState({ open: false });
+    this.props.onClose();
   };
 
   render() {
     const { classes, description, workTitle, info } = this.props;
     return (
       <div>
-        {/* <Button
-          variant="outlined"
-          color="primary"
-          onClick={this.handleClickOpen}
-        >
-          Open alert dialog
-        </Button> */}
         <Dialog
           open={this.props.open}
           onClose={this.handleClose}
