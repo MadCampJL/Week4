@@ -30,6 +30,7 @@ import MusicIcon from '@material-ui/icons/MusicNote';
 import AttachIcon from '@material-ui/icons/AttachFile';
 
 import uploadDialogStyle from "assets/jss/material-dashboard-react/components/uploadDialogStyle";
+import UploadDropzone from "./UploadDropzone";
 
 import { withFirebase } from "../Firebase";
 import { DialogContent, Divider } from '@material-ui/core';
@@ -39,6 +40,7 @@ const INITIAL_STATE = {
   type: "",
   description: "",
   commitMessage: "",
+  fileArray: [],
 };
 
 class UploadNewDialog extends React.Component {
@@ -63,6 +65,12 @@ class UploadNewDialog extends React.Component {
 
   handleUpload = (e) => {
 
+  }
+
+  handleNewFile = (acceptedFiles) => {
+    this.setState({
+      fileArray: acceptedFiles
+    });
   }
 
   handleSignUp = (e) => {
@@ -164,10 +172,34 @@ class UploadNewDialog extends React.Component {
               </Grid>
             </div>
 
-            <Divider/>
-            
-            <div>
+            <Divider className={classes.divider}/>
 
+            <UploadDropzone onNewFile={this.handleNewFile}/>
+            
+            <Divider className={classes.divider}/>
+
+            <div>
+              <TextField
+                id="textfield-description"
+                label="Description"
+                placeholder="Lovely work!"
+                multiline
+                fullWidth
+                className={classes.description}
+                margin="normal"
+                variant="outlined"
+              />
+              
+              <TextField
+                id="textfield-commit-message"
+                label="Commit Message"
+                placeholder="First Commit"
+                multiline
+                fullWidth
+                className={classes.commitMessage}
+                margin="normal"
+                variant="outlined"
+              />
             </div>
           </main>
         </DialogContent>

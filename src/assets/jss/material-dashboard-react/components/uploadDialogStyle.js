@@ -27,6 +27,10 @@ const uploadDialogStyle = theme => ({
     marginLeft: theme.spacing.unit * 2,
     marginRight: theme.spacing.unit * 2,
   },
+  divider: {
+    marginTop: theme.spacing.unit * 2,
+    marginBottom: theme.spacing.unit * 2,
+  },
   stepper: {
     padding: `${theme.spacing.unit * 3}px 0 ${theme.spacing.unit * 5}px`
   },
@@ -48,6 +52,11 @@ const uploadDialogStyle = theme => ({
   button: {
     marginTop: theme.spacing.unit * 3,
     marginLeft: theme.spacing.unit
+  },
+  description: {
+    marginBottom: theme.spacing.unit * 2,
+  },
+  commitMessage: {
   },
   description_head: {
     textAlign: "left",
