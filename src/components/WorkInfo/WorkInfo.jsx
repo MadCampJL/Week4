@@ -1,15 +1,8 @@
 import React from "react";
-import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
-
 import withStyles from "@material-ui/core/styles/withStyles";
-import Paper from "@material-ui/core/Paper";
 import Divider from "@material-ui/core/Divider";
-import TextField from "@material-ui/core/TextField";
-
 import CommentBox from "../../views/Test/CommentBox.jsx";
 import { withFirebase } from "../../components/Firebase";
 
@@ -98,7 +91,8 @@ const styles = theme => ({
 
 class WorkInfo extends React.Component {
   state = {
-    url: ""
+    url: "",
+    imageFiles: []
   };
 
   componentDidMount() {
@@ -116,6 +110,23 @@ class WorkInfo extends React.Component {
         // Handle any errors
         console.log(error);
       });
+
+    this.props.info.files.map(file => {
+      this.props.firebase.storage
+        .refFromURL(file)
+        .getDownloadURL()
+        .then(
+          function(url) {
+            let joined = this.state.imageFiles.concat(url);
+            this.setState({
+              imageFiles: joined
+            });
+          }.bind(this)
+        )
+        .catch(function(error) {
+          console.log(error);
+        });
+    });
   }
 
   handleClose = () => {
@@ -124,6 +135,12 @@ class WorkInfo extends React.Component {
 
   render() {
     const { classes, info } = this.props;
+    let i = 0;
+    const imageList = this.state.imageFiles.map(file => (
+      <div align="center">
+        <img width="90%" src={file} key={i++} alt={file} />
+      </div>
+    ));
     return (
       <div>
         <Dialog
@@ -134,37 +151,32 @@ class WorkInfo extends React.Component {
           <DialogContent>
             <main className={classes.layout}>
               {/* <Paper className={classes.paper}> */}
-                <p align="left" className={classes.div_title}>
-                  Work of <b>Owner</b>
-                </p>
-                <Divider />
-                <h3 align="left" className={classes.div_title}>
-                  {info.name} - Branch Name
-                </h3>
-                <div align="center">
-                  <img
-                    width="90%" src={this.state.url}
-                    alt="http://jilliantamaki.com/wpcore/wp-content/uploads/2016/02/5-464x446.jpg"
-                  />
+              <p align="left" className={classes.div_title}>
+                Work of <b>Owner</b>
+              </p>
+              <Divider />
+              <h3 align="left" className={classes.div_title}>
+                {info.name} - Branch Name
+              </h3>
+              {imageList}
+              <React.Fragment>
+                <div className={classes.description_head}>
+                  A versatile brand
+                  <br />
+                  for a company
+                  <br />
+                  with adaptability
+                  <br />
                 </div>
-                <React.Fragment>
-                  <div className={classes.description_head}>
-                    A versatile brand
-                    <br />
-                    for a company
-                    <br />
-                    with adaptability
-                    <br />
-                  </div>
-                  <div className={classes.description_body}>
-                    {info.description}
-                  </div>
-                </React.Fragment>
-                <Divider />
-                <p align="right" style={{ marginRight: "5%" }}>
-                  Like??
-                </p>
-                <CommentBox info={info}/>
+                <div className={classes.description_body}>
+                  {info.description}
+                </div>
+              </React.Fragment>
+              <Divider />
+              <p align="right" style={{ marginRight: "5%" }}>
+                Like??
+              </p>
+              <CommentBox info={info} />
               {/* </Paper> */}
             </main>
           </DialogContent>
