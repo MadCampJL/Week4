@@ -1,26 +1,24 @@
-import React, { Fragment } from 'react';
+import React, { Component, Fragment } from "react";
 
 import { withStyles } from '@material-ui/core/styles';
-import Person from "@material-ui/icons/Person";
+import CloudUpload from "@material-ui/icons/CloudUpload";
 import Hidden from "@material-ui/core/Hidden";
 
-import SignInDialog from './SignInDialog';
-import UserInfoDialog from './UserInfoDialog';
-
 import Button from "components/CustomButtons/Button.jsx";
-import userButtonStyle from '../../assets/jss/material-dashboard-react/components/userButtonStyle';
+import uploadButtonStyle from '../../assets/jss/material-dashboard-react/components/uploadButtonStyle';
+
+import UploadNewDialog from './UploadNewDialog';
+import SignInDialog from '../User/SignInDialog';
+
 import { withFirebase } from '../Firebase';
 
 
 const INITIAL_STATE = {
   open: false,
-  email: "",
-  password: "",
-  remember: false,
   error: null,
 };
 
-class UserButton extends React.Component {
+class UploadButton extends Component {
 
   constructor(props) {
     super(props);
@@ -54,35 +52,33 @@ class UserButton extends React.Component {
     this.listner();
   }
 
+
   render() {
     const { classes } = this.props;
 
     return (
       <Fragment>
         <Button
-          color={window.innerWidth > 959 ? "transparent" : "white"}
-          justIcon={window.innerWidth > 959}
-          simple={!(window.innerWidth > 959)}
-          aria-label="Person"
-          className={classes.buttonLink}
-          onClick={this.handleClickOpen}
-          >
-          <Person className={classes.icons} />
-          {/* <Hidden mdUp implementation="css">
-            <p className={classes.linkText}>Profile</p>
-          </Hidden> */}
+            color={window.innerWidth > 959 ? "transparent" : "white"}
+            justIcon={window.innerWidth > 959}
+            simple={!(window.innerWidth > 959)}
+            aria-label="Upload"
+            className={classes.buttonLink}
+            onClick={this.handleClickOpen}
+        >
+          <CloudUpload className={classes.icons} />
         </Button>
         <SignInDialog
           open={(this.state.authUser === null) && this.state.open}
           onClose={this.handleClose}
         />
-        <UserInfoDialog
+        <UploadNewDialog
           open={(this.state.authUser !== null) && this.state.open}
-          onClose={this.handleClose}
-        />
+          onClose={this.handleClose} />
       </Fragment>
     );
+    
   }
 }
 
-export default withFirebase(withStyles(userButtonStyle)(UserButton));
+export default withFirebase(withStyles(uploadButtonStyle)(UploadButton));
