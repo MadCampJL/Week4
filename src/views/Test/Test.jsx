@@ -98,9 +98,6 @@ class Test extends React.Component {
     const workList = workArray.map(info => (
       <DashboardItem
         visibility={ this.state.type == "all" || info.type == this.state.type }
-        imgUrl={info.thumbnail}
-        description={info.description}
-        workTitle={info.name}
         key={info.id}
         info={info}
       />
