@@ -10,6 +10,7 @@ import Paper from "@material-ui/core/Paper";
 import Divider from "@material-ui/core/Divider";
 import TextField from "@material-ui/core/TextField";
 
+import CommentBox from "../../views/Test/CommentBox.jsx";
 import { withFirebase } from "../../components/Firebase";
 
 const styles = theme => ({
@@ -102,7 +103,7 @@ class WorkInfo extends React.Component {
 
   componentDidMount() {
     this.props.firebase.storage
-      .refFromURL(this.props.imgUrl)
+      .refFromURL(this.props.info.thumbnail)
       .getDownloadURL()
       .then(
         function(url) {
@@ -122,7 +123,7 @@ class WorkInfo extends React.Component {
   };
 
   render() {
-    const { classes, description, workTitle, info } = this.props;
+    const { classes, info } = this.props;
     return (
       <div>
         <Dialog
@@ -163,66 +164,7 @@ class WorkInfo extends React.Component {
                 <p align="right" style={{ marginRight: "5%" }}>
                   Like??
                 </p>
-                <p
-                  align="left"
-                  style={{
-                    marginLeft: "5%",
-                    marginBottom: "0",
-                    marginTop: "0"
-                  }}
-                >
-                  Comments
-                </p>
-                <TextField
-                  className={classes.textfieldmargin}
-                  id="outlined-full-width"
-                  label="Comment"
-                  // style={{ margin: 8 }}
-                  placeholder="Add a Comment!"
-                  multiline
-                  // margin="normal"
-                  variant="outlined"
-                  InputLabelProps={{
-                    shrink: true
-                  }}
-                />
-                <div style={{ textAlign: "right" }}>
-                  <Button variant="outlined" className={classes.addCommentBtn}>
-                    Add Comment
-                  </Button>
-                </div>
-                <div className={classes.commentBox}>
-                  <div className={classes.commentTopInfo}>
-                    <span className={classes.commentname}>Lorem Ipsum</span>
-                    <span className={classes.commentTime}>5시간 전</span>
-                  </div>
-                  <div className={classes.commentbody}>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                    do eiusmod tempor incididunt ut labore et dolore magna
-                    aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                    ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                    Duis aute irure dolor in reprehenderit in voluptate velit
-                    esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-                    occaecat cupidatat non proident, sunt in culpa qui officia
-                    deserunt mollit anim id est laborum.
-                  </div>
-                </div>
-                <div className={classes.commentBox}>
-                  <div className={classes.commentTopInfo}>
-                    <span className={classes.commentname}>Lorem Ipsum</span>
-                    <span className={classes.commentTime}>5시간 전</span>
-                  </div>
-                  <div className={classes.commentbody}>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                    do eiusmod tempor incididunt ut labore et dolore magna
-                    aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                    ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                    Duis aute irure dolor in reprehenderit in voluptate velit
-                    esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-                    occaecat cupidatat non proident, sunt in culpa qui officia
-                    deserunt mollit anim id est laborum.
-                  </div>
-                </div>
+                <CommentBox info={info}/>
               {/* </Paper> */}
             </main>
           </DialogContent>

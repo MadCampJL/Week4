@@ -44,7 +44,7 @@ class DashboardItem extends Component {
 
   componentDidMount() {
     this.props.firebase.storage
-      .refFromURL(this.props.imgUrl)
+      .refFromURL(this.props.info.thumbnail)
       .getDownloadURL()
       .then(
         function(url) {
@@ -60,15 +60,15 @@ class DashboardItem extends Component {
   }
 
   render() {
-    const { classes, workTitle, description, visibility, info } = this.props;
+    const { classes, visibility, info } = this.props;
     if (visibility == true) {
       return (
         <GridItem xs={12} sm={6} md={3} onClick={this.handleWorkInfoOpen}>
           <Card>
             <CardBody>
               <img src={this.state.url} width="100%" alt="" />
-              <h4 className={classes.cartTitle}>{workTitle}</h4>
-              <p className={classes.cardCategory}>{description}</p>
+              <h4 className={classes.cartTitle}>{info.name}</h4>
+              <p className={classes.cardCategory}>{info.description}</p>
             </CardBody>
             <CardFooter>
               <div className={classes.stats}>campaign sent 2 days ago</div>
@@ -77,9 +77,6 @@ class DashboardItem extends Component {
           <WorkInfo
             open={this.state.work_info_open}
             onClose={this.handleWorkInfoClose}
-            description={description}
-            imgUrl={this.props.imgUrl}
-            workTitle={workTitle}
             info={info}/>
         </GridItem>
       );
