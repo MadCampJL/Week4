@@ -1,5 +1,3 @@
-import { runInThisContext } from "vm";
-
 const uploadDialogStyle = theme => ({
   layout: {
     marginLeft: theme.spacing.unit * 2,

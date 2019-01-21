@@ -26,7 +26,6 @@ const INITIAL_STATE = {
   rejected: []
 };
 
-const reader = new FileReader();
 
 class UploadDropzone extends React.Component {
 
@@ -38,14 +37,26 @@ class UploadDropzone extends React.Component {
 
   onDrop = (acceptedFiles, rejectedFiles) => {
 
-    acceptedFiles.forEach(file => {
-      if(!this.state.accepted.includes(file)) {
-        this.setState({ accepted: [...this.state.accepted, file] });
+    acceptedFiles.forEach((acceptedFile) => {
+
+      let isExist = false;
+
+      this.state.accepted.forEach((file) => {
+        if(acceptedFile.name === file.name) {
+          isExist = true;
+        }
+      })
+
+      if(!isExist) {
+        this.setState({
+          accepted: this.state.accepted.concat(acceptedFile)
+        }, () => {this.props.onNewFile(this.state.accepted)});
       }
+
     });
 
-    this.props.onNewFile(this.state.accepted);
     
+
   }
 
   render() {
