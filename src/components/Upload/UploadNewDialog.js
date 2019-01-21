@@ -34,6 +34,7 @@ import UploadDropzone from "./UploadDropzone";
 
 import { withFirebase } from "../Firebase";
 import { DialogContent, Divider } from '@material-ui/core';
+import { rejects } from 'assert';
 
 const INITIAL_STATE = {
   title: "",
@@ -42,6 +43,8 @@ const INITIAL_STATE = {
   commitMessage: "",
   fileArray: [],
 };
+
+const reader = new FileReader();
 
 class UploadNewDialog extends React.Component {
 
@@ -62,8 +65,82 @@ class UploadNewDialog extends React.Component {
     });
   };
 
+  componentDidMount() {
+    this.listner = this.props.firebase.auth.onAuthStateChanged(
+      authUser => {
+        authUser
+          ? this.setState({ authUser })
+          : this.setState({ authUser: null });
+      }
+    )
+  }
+
+  componentWillUnmount() {
+    this.listner();
+  }
+
   handleUpload = (e) => {
     console.log(this.state);
+
+    let userRef = this.props.firebase.user(this.state.authUser.uid);
+    let workRef = this.props.firebase.db.collection('works');
+    let storageRef = this.props.firebase.storage.ref();
+    let firebase = this.props.firebase.firebase;
+
+    storageRef.constructor.prototype.putFiles = (files) => {
+        return Promise.all(files.map((file) => {
+          return storageRef
+            .child(file.name)
+            .put(file)
+            .then((snapshot) => snapshot.ref.getDownloadURL())
+            .catch((error) => Promise.reject(error));
+        }))
+      };
+    
+    storageRef.putFiles(this.state.fileArray)
+      .then((downloadUrls) => {
+        workRef.add({})
+        .then((docRef) => {
+          docRef.set({
+            name: this.state.title,
+            description: this.state.description,
+            parent: {master: docRef.id},
+            thumbnail: downloadUrls[0],
+            type: this.state.type,
+            like: 0,
+            isRecent: true,
+            commitMessage: this.state.commitMessage,
+            comments: [],
+            forkedUsers: [],
+            owner: this.state.authUser.uid,
+            ownerName: this.state.authUser.displayName,
+            date: (new Date()).getTime(),
+            files: downloadUrls,
+          })
+
+          .then(()=>{
+            console.log('Work add success!');
+            userRef.update({
+              collections: firebase.firestore.FieldValue.arrayUnion(docRef.id)
+            })
+            .then(()=>{
+              console.log('User collection update success!');
+            })
+            .catch((error)=>{
+              console.log(error);
+            })
+          })
+          .catch((error)=>{
+            console.log(error);
+          })
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   handleNewFile = (acceptedFiles) => {

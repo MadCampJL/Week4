@@ -3,12 +3,13 @@ import classNames from 'classnames';
 import Dropzone from 'react-dropzone';
 
 const baseStyle = {
-  width: 200,
+  // width: 200,
   height: 200,
   borderWidth: 2,
   borderColor: '#666',
   borderStyle: 'dashed',
-  borderRadius: 5
+  borderRadius: 5,
+  paddingLeft: 10
 };
 const activeStyle = {
   borderStyle: 'solid',
@@ -62,7 +63,7 @@ class UploadDropzone extends React.Component {
   render() {
    return (
   
-    <Dropzone accept="image/*" onDrop={this.onDrop}>
+    <Dropzone onDrop={this.onDrop}>
       {({ getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject, acceptedFiles, rejectedFiles }) => {
         let styles = {...baseStyle}
         styles = isDragActive ? {...styles, ...activeStyle} : styles
@@ -74,8 +75,11 @@ class UploadDropzone extends React.Component {
             style={styles}
           >
             <input {...getInputProps()} />
-            <div>
+            <p>
               {isDragAccept ? 'Drop' : 'Drag'} files here...
+            </p>
+            <div>
+              {this.state.accepted.map(f => <li key={f.name}>{f.name} - {f.size} bytes</li>)}
             </div>
             {isDragReject && <div>Unsupported file type...</div>}
           </div>
