@@ -38,17 +38,19 @@ class UploadDropzone extends React.Component {
   }
 
   componentDidMount() {
-    this.props.fileUrls.forEach((url) => {
-      this.props.firebase.storage
-        .refFromURL(url)
-        .getMetadata().then((metadata) => {
-          this.setState({
-            fileNameArray: this.state.fileNameArray.concat(metadata.name)
-          })
-        }).catch(function(error) {
-          console.log(error);
-        });
-    })
+    if(this.props.fileUrls !== undefined) {
+      this.props.fileUrls.forEach((url) => {
+        this.props.firebase.storage
+          .refFromURL(url)
+          .getMetadata().then((metadata) => {
+            this.setState({
+              fileNameArray: this.state.fileNameArray.concat(metadata.name)
+            })
+          }).catch(function(error) {
+            console.log(error);
+          });
+      })
+    }
   }
 
   onDrop = (acceptedFiles, rejectedFiles) => {
