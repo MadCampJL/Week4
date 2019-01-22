@@ -60,9 +60,10 @@ class Selectbar extends React.Component {
             <MenuItem value={"all"}>
               <em>All</em>
             </MenuItem>
-            <MenuItem value={"essay"}>Essay</MenuItem>
-            <MenuItem value={"illustration"}>Illustration</MenuItem>
-            <MenuItem value={"idk"}>Idk</MenuItem>
+            <MenuItem value={"Writing"}>Writing</MenuItem>
+            <MenuItem value={"Drawing"}>Drawing</MenuItem>
+            <MenuItem value={"Photo"}>Photo</MenuItem>
+            <MenuItem value={"Photo"}>Design</MenuItem>
           </Select>
         </FormControl>
       </form>
