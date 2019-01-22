@@ -48,6 +48,7 @@ const INITIAL_STATE = {
   uploading: false,
 
   oldBranchName: "",
+  oldRefId: "",
   
 };
 
@@ -90,6 +91,7 @@ class NewCommitDialog extends React.Component {
       ...this.props.data,
       commitMessage: "",
       oldBranchName: this.props.data.branchName,
+      oldRefId: this.props.data.id,
     });
 
   }
@@ -127,6 +129,7 @@ class NewCommitDialog extends React.Component {
         let object = {
           name: this.state.name,
           description: this.state.description,
+          branchName: this.state.branchName,
           parent: this.state.parent.concat({[this.state.branchName]: docRef.id}),
           thumbnail: "gs://madcampjl.appspot.com/writingThumbnail.jpg",
           type: this.state.type,
@@ -217,6 +220,7 @@ class NewCommitDialog extends React.Component {
             console.log(this.state);
             docRef.set({
               name: this.state.name,
+              branchName: this.state.branchName,
               description: this.state.description,
               parent: this.state.parent.concat({[this.state.branchName]: docRef.id}),
               thumbnail: this.state.files[0],
@@ -248,7 +252,7 @@ class NewCommitDialog extends React.Component {
                 })
                 .then(() => {
                   console.log("Tree collection add success!");
-
+                  console.log(this.state.oldBranchName, this.state.branchName, this.state.oldRefId);
                   if(this.state.oldBranchName === this.state.branchName) {
                     workRef.doc(this.state.oldRefId).update({
                       isRecent: false,
