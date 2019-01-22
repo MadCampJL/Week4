@@ -47,7 +47,7 @@ const INITIAL_STATE = {
 
   uploading: false,
 
-  oldRefId: "",
+  oldBranchName: "",
   
 };
 
@@ -89,7 +89,7 @@ class NewCommitDialog extends React.Component {
     this.setState({
       ...this.props.data,
       commitMessage: "",
-      oldRefId: this.props.data.id,
+      oldBranchName: this.props.data.branchName,
     });
 
   }
@@ -124,7 +124,7 @@ class NewCommitDialog extends React.Component {
       // Writing
       workRef.add({})
       .then((docRef) => {
-        docRef.set({
+        let object = {
           name: this.state.name,
           description: this.state.description,
           parent: this.state.parent.concat({[this.state.branchName]: docRef.id}),
@@ -140,7 +140,9 @@ class NewCommitDialog extends React.Component {
           ownerName: this.state.ownerName,
           date: (new Date()).getTime(),
           files: [this.state.writing],
-        })
+        };
+        console.log(object);
+        docRef.set(object)
         .then(()=>{
           console.log('Work add success!');
           userRef.update({
@@ -149,7 +151,12 @@ class NewCommitDialog extends React.Component {
           .then(()=>{
             console.log('User collection update success!');
 
-            treeRef.update({
+            // async function getObject() {
+            //   const snapshot = await treeRef.get();
+            //   return snapshot.docs.map(doc => doc.data());
+            // }
+
+            treeRef.add({
               id: docRef.id,
               branch: this.state.branchName,
               children: []
@@ -158,17 +165,22 @@ class NewCommitDialog extends React.Component {
             .then(() => {
               console.log("Tree collection add success!");
 
-              workRef.doc(this.state.oldRefId).update({
-                isRecent: false,
-              })
-              .then(() => {
-                console.log("isRecent update success!");
+              if(this.state.oldBranchName === this.state.branchName) {
+                workRef.doc(this.state.oldRefId).update({
+                  isRecent: false,
+                })
+                .then(() => {
+                  console.log("isRecent update success!");
+                  this.handleClose();
+                  window.location.reload();
+                })
+                .catch((error) => {
+                  console.log(error);
+                })
+              } else {
                 this.handleClose();
                 window.location.reload();
-              })
-              .catch((error) => {
-                console.log(error);
-              })
+              }
             })
             .catch((error) => {
               console.log(error);
@@ -231,23 +243,28 @@ class NewCommitDialog extends React.Component {
 
                 treeRef.add({
                   id: docRef.id,
-                  branch: 'master',
+                  branch: this.state.branchName,
                   children: []
                 })
                 .then(() => {
                   console.log("Tree collection add success!");
 
-                  workRef.doc(this.state.oldRefId).update({
-                    isRecent: false,
-                  })
-                  .then(() => {
-                    console.log("isRecent update success!");
+                  if(this.state.oldBranchName === this.state.branchName) {
+                    workRef.doc(this.state.oldRefId).update({
+                      isRecent: false,
+                    })
+                    .then(() => {
+                      console.log("isRecent update success!");
+                      this.handleClose();
+                      window.location.reload();
+                    })
+                    .catch((error) => {
+                      console.log(error);
+                    })
+                  } else {
                     this.handleClose();
                     window.location.reload();
-                  })
-                  .catch((error) => {
-                    console.log(error);
-                  })
+                  }
                 })
                 .catch((error) => {
                   console.log(error);
@@ -275,6 +292,7 @@ class NewCommitDialog extends React.Component {
   getWriting = () => {
     let literature = "";
     this.state.files.forEach((writing) => {
+      console.log(writing);
       literature += (writing + '\n');
     })
     return literature;
