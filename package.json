@@ -23,13 +23,9 @@
     "react-router-dom": "4.3.1",
     "react-scripts": "1.1.5",
     "react-tree-graph": "^3.2.0",
-<<<<<<< HEAD
-    "react-swipe": "^6.0.4"
-=======
     "react-swipe": "^6.0.4",
     "react-swipeable-views": "^0.13.1",
     "react-swipeable-views-utils": "^0.13.1"
->>>>>>> 04468e3d086fbe08fababa17aec01759b126f2d8
   },
   "scripts": {
     "start": "react-scripts start",

@@ -17,7 +17,7 @@ import Maps from "views/Maps/Maps.jsx";
 import NotificationsPage from "views/Notifications/Notifications.jsx";
 import Test from "views/Test/Test.jsx";
 import UpgradeToPro from "views/UpgradeToPro/UpgradeToPro.jsx";
-import Portfolio from "../views/Portfolio/Portfolio";
+import Portfolio from "../views/Port/Portfolio";
 import Discover from "../views/Discover/Discover";
 
 const dashboardRoutes = [
