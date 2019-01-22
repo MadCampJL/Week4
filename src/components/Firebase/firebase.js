@@ -1,4 +1,3 @@
-import firebase from "firebase";
 import app from "firebase/app";
 import "firebase/auth";
 import "firebase/database";
@@ -18,10 +17,10 @@ class Firebase {
   constructor() {
     app.initializeApp(config);
 
-    this.firebase = firebase;
     this.auth = app.auth();
     this.db = app.firestore();
     this.storage = app.storage();
+    this.FieldValue = app.firestore.FieldValue;
   }
 
   // Auth API

@@ -47,6 +47,9 @@ const uploadDialogStyle = theme => ({
   uploadButtonIcon: {
     marginLeft: theme.spacing.unit,
   },
+  progress: {
+    marginLeft: theme.spacing.unit,
+  },
   button: {
     marginTop: theme.spacing.unit * 3,
     marginLeft: theme.spacing.unit

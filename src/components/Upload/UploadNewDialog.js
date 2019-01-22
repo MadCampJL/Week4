@@ -28,6 +28,7 @@ import PhotoIcon from '@material-ui/icons/PhotoCamera';
 import DesignIcon from '@material-ui/icons/Layers';
 import MusicIcon from '@material-ui/icons/MusicNote';
 import AttachIcon from '@material-ui/icons/AttachFile';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import uploadDialogStyle from "assets/jss/material-dashboard-react/components/uploadDialogStyle";
 import UploadDropzone from "./UploadDropzone";
@@ -42,9 +43,9 @@ const INITIAL_STATE = {
   description: "",
   commitMessage: "",
   fileArray: [],
+  uploading: false,
+  email: ""
 };
-
-const reader = new FileReader();
 
 class UploadNewDialog extends React.Component {
 
@@ -66,13 +67,26 @@ class UploadNewDialog extends React.Component {
   };
 
   componentDidMount() {
+
     this.listner = this.props.firebase.auth.onAuthStateChanged(
       authUser => {
-        authUser
-          ? this.setState({ authUser })
-          : this.setState({ authUser: null });
+        if(authUser) {
+          this.setState({ authUser });
+          this.props.firebase.getUserInfo(authUser)
+            .then((userDoc) => {
+              this.setState({
+                email: userDoc.email,
+              });
+            })
+            .catch(() => {
+              console.log('Something went wrong!');
+            })
+        } else {
+          this.setState({ authUser: null });
+        }
       }
-    )
+    );
+
   }
 
   componentWillUnmount() {
@@ -82,10 +96,24 @@ class UploadNewDialog extends React.Component {
   handleUpload = (e) => {
     console.log(this.state);
 
+    const isInvalid =
+      this.state.title === '' ||
+      this.state.type === '' ||
+      this.state.description === '' ||
+      this.state.commitMessage === '' ||
+      this.state.fileArray.length === 0;
+    
+    if(isInvalid) {
+      alert("모든 필드에 정보를 입력해 주세요");
+      return;
+    }
+
+    this.setState({ uploading: true });
+
     let userRef = this.props.firebase.user(this.state.authUser.uid);
     let workRef = this.props.firebase.db.collection('works');
     let storageRef = this.props.firebase.storage.ref();
-    let firebase = this.props.firebase.firebase;
+    // let firebase = this.props.firebase.firebase;
 
     storageRef.constructor.prototype.putFiles = (files) => {
         return Promise.all(files.map((file) => {
@@ -112,8 +140,9 @@ class UploadNewDialog extends React.Component {
             commitMessage: this.state.commitMessage,
             comments: [],
             forkedUsers: [],
+            likedUsers: [],
             owner: this.state.authUser.uid,
-            ownerName: this.state.authUser.displayName,
+            ownerName: this.state.email,
             date: (new Date()).getTime(),
             files: downloadUrls,
           })
@@ -121,10 +150,12 @@ class UploadNewDialog extends React.Component {
           .then(()=>{
             console.log('Work add success!');
             userRef.update({
-              collections: firebase.firestore.FieldValue.arrayUnion(docRef.id)
+              collections: this.props.firebase.FieldValue.arrayUnion(docRef.id)
             })
             .then(()=>{
               console.log('User collection update success!');
+              this.handleClose();
+              window.location.reload();
             })
             .catch((error)=>{
               console.log(error);
@@ -219,7 +250,9 @@ class UploadNewDialog extends React.Component {
                   onClick={this.handleUpload}
                   >
                   Upload
-                  <CloudUploadIcon className={classes.uploadButtonIcon} />
+                  {this.state.uploading ? 
+                    <CircularProgress size={24} className={classes.progress} /> :
+                    <CloudUploadIcon className={classes.uploadButtonIcon} />}
                 </Button>
                 </Grid>
               </Grid>
@@ -235,7 +268,7 @@ class UploadNewDialog extends React.Component {
               <Grid container>
                 <Grid item xs={12} sm={2}>
                   <Chip avatar={<Avatar><WritingIcon /></Avatar>}
-                    variant="outlined"
+                    variant={(this.state.type === "Writing") ? "default" : "outlined"}
                     color="primary"
                     className={classes.type}
                     label="글"
@@ -244,7 +277,7 @@ class UploadNewDialog extends React.Component {
                 <Grid item xs={12} sm={2}>
                   <Chip
                     avatar={<Avatar><DrawingIcon /></Avatar>}
-                    variant="outlined"
+                    variant={(this.state.type === "Drawing") ? "default" : "outlined"}
                     color="primary"
                     className={classes.type}
                     label="그림"
@@ -253,7 +286,7 @@ class UploadNewDialog extends React.Component {
                 <Grid item xs={12} sm={2}>
                   <Chip
                     avatar={<Avatar><PhotoIcon /></Avatar>}
-                    variant="outlined"
+                    variant={(this.state.type === "Photo") ? "default" : "outlined"}
                     color="primary"
                     className={classes.type}
                     label="사진"
@@ -262,7 +295,7 @@ class UploadNewDialog extends React.Component {
                 <Grid item xs={12} sm={2}>
                 <Chip
                   avatar={<Avatar><DesignIcon /></Avatar>}
-                  variant="outlined"
+                  variant={(this.state.type === "Design") ? "default" : "outlined"}
                   color="primary"
                   className={classes.type}
                   label="디자인"
@@ -271,7 +304,7 @@ class UploadNewDialog extends React.Component {
                 <Grid item xs={12} sm={2}>
                   <Chip
                     avatar={<Avatar><MusicIcon /></Avatar>} 
-                    variant="outlined"
+                    variant={(this.state.type === "Music") ? "default" : "outlined"}
                     color="primary"
                     className={classes.type}
                     label="음악"
@@ -280,7 +313,7 @@ class UploadNewDialog extends React.Component {
                 <Grid item xs={12} sm={2}>
                   <Chip
                     avatar={<Avatar><AttachIcon /></Avatar>}
-                    variant="outlined"
+                    variant={(this.state.type === "Attach") ? "default" : "outlined"}
                     color="primary"
                     className={classes.type}
                     label="기타"
