@@ -196,14 +196,10 @@ class Portfolio extends React.Component {
             name="searchKey"
             value={this.state.searchKey}
             onChange={this.handleChange}
-            formControlProps={{
-              className: classes.margin + " " + classes.search
-            }}
+            
             inputProps={{
               placeholder: "Search",
-              inputProps: {
-                "aria-label": "Search"
-              }
+            
             }}
           />
           <Button color="white" aria-label="edit" justIcon round onClick={this.onPressSearch}>

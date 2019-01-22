@@ -110,7 +110,7 @@ class DashboardItem extends Component {
             <NewCommitDialog
             open={this.state.dialogOpen}
             onClose={this.closeDialog}
-            data={this.props.data}/> :
+            data={info}/> :
             null
           }
         </Fragment>
