@@ -11,7 +11,7 @@ import CardBody from "components/Card/CardBody.jsx";
 import CardFooter from "components/Card/CardFooter.jsx";
 
 import WorkInfo from "../../components/WorkInfo/WorkInfo.jsx";
-
+import Divider from "@material-ui/core/Divider";
 import { withFirebase } from "../../components/Firebase";
 
 class DashboardItem extends Component {
@@ -21,21 +21,25 @@ class DashboardItem extends Component {
     this.state = {
       url: "",
       workInfoOpen: false,
-      wtf: false,
+      loading: true,
     };
+  }
+
+  handleLoad = () => {
+    this.setState({
+      loading: !this.state.loading,
+    })
   }
 
   handleWorkInfoOpen = () => {
     this.setState({
       workInfoOpen: true,
-      wtf: true
     });
   }
 
   handleWorkInfoClose = () => {
     this.setState({
       workInfoOpen: false,
-      wtf: false
     });
   }
 
@@ -65,17 +69,17 @@ class DashboardItem extends Component {
             <Card>
               <CardBody>
                 <img src={this.state.url} width="100%" alt="" />
-                <h4 className={classes.cartTitle}>{info.name}</h4>
-                <p className={classes.cardCategory}>{info.description}</p>
+                <div style={{fontSize: "20px", marginTop: "2%"}}>{info.name}</div>
+                <div style={{marginBottom: "2%"}} className={classes.cardCategory}>{info.commitMessage}</div>
+                <Divider />
+                <div style={{fontSize: "11px"}} className={classes.cardCategory}>{info.comments.length} Comments, {info.like} Likes </div>
               </CardBody>
-              <CardFooter>
-                <div className={classes.stats}>campaign sent 2 days ago</div>
-              </CardFooter>
             </Card>
             
           </GridItem>
           {this.state.workInfoOpen ?
           <WorkInfo
+            load={this.handleLoad}
             open={this.state.workInfoOpen}
             onClose={this.handleWorkInfoClose}
             info={info}

@@ -1,14 +1,19 @@
 import React from "react";
 // @material-ui/core
 import withStyles from "@material-ui/core/styles/withStyles";
+import Search from "@material-ui/icons/Search";
+import CustomInput from "../../components/CustomInput/CustomInput.jsx";
+import Button from "../../components/CustomButtons/Button.jsx";
 
 import dashboardStyle from "assets/jss/material-dashboard-react/views/dashboardStyle.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import Selectbar from "components/SelectBar/Selectbar.jsx";
+import TextField from '@material-ui/core/TextField';
 
 import DashboardItem from "./DashboardItem.jsx";
 
 import { withFirebase } from "../../components/Firebase";
+import { Select } from "@material-ui/core";
 
 let workArray = [];
 
@@ -19,6 +24,8 @@ class Test extends React.Component {
     email: "",
     fullname: "",
     loading: true,
+    searchKey: "",
+    clickSearch: false,
   };
 
   componentDidMount() {
@@ -43,8 +50,10 @@ class Test extends React.Component {
       });
   }
 
-  handleChange = (event, value) => {
-    this.setState({ value });
+  handleChange = (e) => {
+    this.setState({
+      searchKey: e.target.value
+    })
   };
 
   handleChangeIndex = index => {
@@ -60,6 +69,11 @@ class Test extends React.Component {
       [e.target.name]: e.target.value
     });
   };
+
+  onPressSearch = () => {
+    console.log(this.state.clickSearch);
+    this.setState({clickSearch: true});
+  }
 
   addUser = e => {
     e.preventDefault();
@@ -78,35 +92,46 @@ class Test extends React.Component {
     });
   };
 
-  readExample = e => {
-    const db = this.props.firebase.db;
-    db.collection("works")
-      .where("isRecent", "==", true)
-      .get()
-      .then(function(querySnapshot) {
-        querySnapshot.forEach(function(doc) {
-          console.log(doc.id, " => ", doc.data());
-        });
-      })
-      .catch(function(error) {
-        console.log("Error getting documents: ", error);
-      });
-  };
+  // readExample = e => {
+  //   const db = this.props.firebase.db;
+  //   db.collection("works")
+  //     .where("isRecent", "==", true)
+  //     .get()
+  //     .then(function(querySnapshot) {
+  //       querySnapshot.forEach(function(doc) {
+  //         console.log(doc.id, " => ", doc.data());
+  //       });
+  //     })
+  //     .catch(function(error) {
+  //       console.log("Error getting documents: ", error);
+  //     });
+  // };
 
   render() {
     const { classes } = this.props;
-    const workList = workArray.map(info => (
+    let tempWorkList = [];
+
+    workArray.map(info => {
+      if (info.name.indexOf(this.state.searchKey) > -1) {
+        tempWorkList.push(info);
+      }
+    });
+
+    const workList = tempWorkList.map(info => (
       <DashboardItem
-        visibility={ this.state.type == "all" || info.type == this.state.type }
+        visibility={this.state.type == "all" || info.type == this.state.type}
         key={info.id}
         info={info}
       />
-    ));
+      ));
+
     return (
       <div>
         <div />
         {/* 셀렉트바...... */}
+
         <Selectbar onCreate={this.handleChangeType} />
+
         {/* <button onClick={this.readExample}>
           클릭하면 데이터베이스에서 읽는다!
         </button> */}
@@ -132,6 +157,41 @@ class Test extends React.Component {
           <hr />
         </div> */}
         <GridContainer>{workList}</GridContainer>
+        <div
+          className={classes.searchWrapper}
+          style={{
+            position: "fixed",
+            bottom: "10px",
+            right: "40px",
+            backgroundColor: "#f2f2f2",
+            padding: "20px",
+            paddingTop: "10px",
+            paddingBottom: "10px",
+            paddingLeft: "20px",
+            paddingRight: "15px",
+            marginBottom: "1%",
+            borderRadius: "10px",
+            boxShadow: "0px 0px 20px #c6c6c6"
+          }}
+        >
+          <TextField
+            name="searchKey"
+            value={this.state.searchKey}
+            onChange={this.handleChange}
+            formControlProps={{
+              className: classes.margin + " " + classes.search
+            }}
+            inputProps={{
+              placeholder: "Search",
+              inputProps: {
+                "aria-label": "Search"
+              }
+            }}
+          />
+          <Button color="white" aria-label="edit" justIcon round onClick={this.onPressSearch}>
+            <Search />
+          </Button>
+        </div>
       </div>
     );
   }

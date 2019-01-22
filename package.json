@@ -23,7 +23,8 @@
     "react-router-dom": "4.3.1",
     "react-scripts": "1.1.5",
     "react-swipeable-views": "0.12.17",
-    "react-tree-graph": "^3.2.0"
+    "react-tree-graph": "^3.2.0",
+    "react-swipe": "^6.0.4",
   },
   "scripts": {
     "start": "react-scripts start",

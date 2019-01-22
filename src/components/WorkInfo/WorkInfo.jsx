@@ -6,6 +6,10 @@ import Divider from "@material-ui/core/Divider";
 import CommentBox from "../../views/Test/CommentBox.jsx";
 import { withFirebase } from "../../components/Firebase";
 
+import ThumbUp from "@material-ui/icons/ThumbUp";
+import Avatar from "@material-ui/core/Avatar";
+import Chip from "@material-ui/core/Chip";
+
 const styles = theme => ({
   layout: {
     width: "auto",
@@ -41,6 +45,7 @@ const styles = theme => ({
   description_head: {
     textAlign: "left",
     margin: "5%",
+    marginBottom: "0px",
     color: "#828282",
     fontSize: "20px",
     fontWeight: "bold"
@@ -48,6 +53,7 @@ const styles = theme => ({
   description_body: {
     textAlign: "left",
     margin: "5%",
+    marginTop: "0px",
     color: "#828282"
   },
   div_title: {
@@ -92,7 +98,8 @@ const styles = theme => ({
 class WorkInfo extends React.Component {
   state = {
     url: "",
-    imageFiles: []
+    imageFiles: [],
+    isLiked: false
   };
 
   componentDidMount() {
@@ -111,75 +118,164 @@ class WorkInfo extends React.Component {
         console.log(error);
       });
 
-    this.props.info.files.map(file => {
-      this.props.firebase.storage
-        .refFromURL(file)
-        .getDownloadURL()
-        .then(
-          function(url) {
-            let joined = this.state.imageFiles.concat(url);
-            this.setState({
-              imageFiles: joined
-            });
-          }.bind(this)
-        )
-        .catch(function(error) {
-          console.log(error);
-        });
+    if (
+      this.props.info.type === "Drawing" ||
+      this.props.info.type === "Photo" ||
+      this.props.info.type === "Design"
+    ) {
+      this.props.info.files.map(file => {
+        this.props.firebase.storage
+          .refFromURL(file)
+          .getDownloadURL()
+          .then(
+            function(url) {
+              let joined = this.state.imageFiles.concat(url);
+              this.setState({
+                imageFiles: joined
+              });
+            }.bind(this)
+          )
+          .catch(function(error) {
+            console.log(error);
+          });
+      });
+    }
+
+    this.listner = this.props.firebase.auth.onAuthStateChanged(authUser => {
+      authUser
+        ? this.setState({ authUser }, () => {
+            let likedList = this.props.info.likedUsers;
+            if (likedList.indexOf(this.state.authUser.email) !== -1) {
+              this.setState({
+                isLiked: true
+              });
+            }
+          })
+        : this.setState({ authUser: null });
     });
   }
 
+  handleLikeClick = () => {
+    if (this.state.authUser === false) {
+      alert("Please try again after logging in");
+    }
+    this.setState({
+      isLiked: true
+    });
+    // db에다가 추가해야됨
+    const prevList = this.props.info.likedUsers;
+    prevList.push(this.state.authUser.email);
+    const prevLikes = this.props.info.like + 1;
+    const db = this.props.firebase.db;
+    const likedRef = db.collection("works").doc(this.props.info.id);
+    return likedRef.update({
+      likedUsers: prevList,
+      like: prevLikes
+    });
+  };
+
   handleClose = () => {
+    this.props.load();
     this.props.onClose();
   };
 
   render() {
     const { classes, info } = this.props;
     let i = 0;
-    const imageList = this.state.imageFiles.map(file => (
-      <div align="center" key={i++} >
-        <img width="90%" src={file} alt={file} />
-      </div>
-    ));
+    let likeChip;
+    let bigContent = <div />;
+    if (
+      info.type === "Photo" ||
+      info.type === "Design" ||
+      info.type === "Drawing"
+    ) {
+      bigContent = this.state.imageFiles.map(file => (
+        <div align="center" key={i++}>
+          <img width="90%" src={file} alt={file} />
+        </div>
+      ));
+    } else if (info.type === "Writing") {
+      console.log("info.type: ", info.type);
+      bigContent = (
+        <div align="left" style={{margin: "5%", color: "black"}}>
+          {info.files[0]}
+        </div>
+      );
+    }
+
+    if (this.state.authUser !== null) {
+      if (this.state.isLiked === false) {
+        likeChip = (
+          <Chip
+            avatar={
+              <Avatar>
+                <ThumbUp />
+              </Avatar>
+            }
+            label="Like this Work!"
+            className={classes.chip}
+            onClick={this.handleLikeClick}
+            color="primary"
+          />
+        );
+      } else {
+        likeChip = (
+          <Chip
+            avatar={
+              <Avatar>
+                <ThumbUp />
+              </Avatar>
+            }
+            label="You already liked this work"
+            className={classes.chip}
+          />
+        );
+      }
+    } else {
+      likeChip = (
+        <Chip
+          avatar={
+            <Avatar>
+              <ThumbUp />
+            </Avatar>
+          }
+          label="Please Log In"
+          className={classes.chip}
+        />
+      );
+    }
     return (
-        <Dialog
-          open={this.props.open}
-          onClose={this.handleClose}
-          maxWidth={false}
-        >
-          <DialogContent>
-            <main className={classes.layout}>
-              {/* <Paper className={classes.paper}> */}
-              <p align="left" className={classes.div_title}>
-                Work of <b>Owner</b>
-              </p>
-              <Divider />
-              <h3 align="left" className={classes.div_title}>
-                {info.name} - Branch Name
-              </h3>
-              {imageList}
-              <React.Fragment>
-                <div className={classes.description_head}>
-                  A versatile brand
-                  <br />
-                  for a company
-                  <br />
-                  with adaptability
-                  <br />
-                </div>
-                <div className={classes.description_body}>
-                  {info.description}
-                </div>
-              </React.Fragment>
-              <Divider />
-              <p align="right" style={{ marginRight: "5%" }}>
-                Like??
-              </p>
-              <CommentBox info={info} />
-              {/* </Paper> */}
-            </main>
-          </DialogContent>
-        </Dialog>
+      <Dialog
+        open={this.props.open}
+        onClose={this.handleClose}
+        maxWidth={false}
+      >
+        <DialogContent>
+          <main className={classes.layout}>
+            {/* <Paper className={classes.paper}> */}
+            <p align="left" className={classes.div_title}>
+              Work of <b>{info.ownerName}</b>
+            </p>
+            <Divider />
+            <h3 align="left" className={classes.div_title}>
+              {info.name}
+            </h3>
+            {bigContent}
+            <React.Fragment>
+              <div className={classes.description_head} style={{marginBottom: "0px"}}>
+                {info.commitMessage}
+              </div>
+              <div className={classes.description_body} style={{marginTop: "2%"}}>{info.description}</div>
+            </React.Fragment>
+            <Divider />
+            <div align="right" style={{ marginRight: "5%", marginTop: "2%" }}>
+              {likeChip}
+            </div>
+            <CommentBox info={info} />
+            {/* </Paper> */}
+          </main>
+        </DialogContent>
+      </Dialog>
     );
   }
 }
