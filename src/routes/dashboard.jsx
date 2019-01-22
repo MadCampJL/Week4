@@ -7,6 +7,7 @@ import BubbleChart from "@material-ui/icons/BubbleChart";
 import LocationOn from "@material-ui/icons/LocationOn";
 import Notifications from "@material-ui/icons/Notifications";
 import Unarchive from "@material-ui/icons/Unarchive";
+import BlurOn from "@material-ui/icons/BlurOn";
 // core components/views
 import DashboardPage from "views/Dashboard/Dashboard.jsx";
 import UserProfile from "views/UserProfile/UserProfile.jsx";
@@ -40,7 +41,7 @@ const dashboardRoutes = [
     path: "/discover",
     sidebarName: "Discover",
     navbarName: "Discover",
-    icon: Person,
+    icon: BlurOn,
     component: Discover
   },
 
