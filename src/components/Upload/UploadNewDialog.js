@@ -191,7 +191,8 @@ class UploadNewDialog extends React.Component {
             docRef.set({
               name: this.state.title,
               description: this.state.description,
-              parent: {master: docRef.id},
+              branchName: "master",
+              parent: [{master: docRef.id}],
               thumbnail: downloadUrls[0],
               type: this.state.type,
               like: 0,
