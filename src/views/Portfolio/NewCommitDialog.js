@@ -1,11 +1,6 @@
 import React from 'react';
 
 import Typography from '@material-ui/core/Typography';
-import FormControl from '@material-ui/core/FormControl';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import Input from '@material-ui/core/Input';
-import Paper from '@material-ui/core/Paper';
 
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
@@ -30,25 +25,34 @@ import MusicIcon from '@material-ui/icons/MusicNote';
 import AttachIcon from '@material-ui/icons/AttachFile';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-import uploadDialogStyle from "assets/jss/material-dashboard-react/components/uploadDialogStyle";
-import UploadDropzone from "./UploadDropzone";
+import newCommitDialogStyle from "assets/jss/material-dashboard-react/components/newCommitDialogStyle";
+import UploadDropzone from "../../components/Upload/UploadDropzone";
 
-import { withFirebase } from "../Firebase";
+import { withFirebase } from "../../components/Firebase";
 import { DialogContent, Divider } from '@material-ui/core';
-import { rejects } from 'assert';
 
 const INITIAL_STATE = {
-  title: "",
+  name: "",
   type: "",
+  files: [],
+  branchName: "master",
   description: "",
   commitMessage: "",
-  fileArray: [],
+
+  parent: [],
+  thumbnail: "",
+  
+  owner: "",
+  ownerName: "",
+
   uploading: false,
-  email: "",
-  writing: "",
+
+  oldRefId: "",
+  
 };
 
-class UploadNewDialog extends React.Component {
+
+class NewCommitDialog extends React.Component {
 
   constructor(props) {
     super(props);
@@ -68,25 +72,25 @@ class UploadNewDialog extends React.Component {
   };
 
   componentDidMount() {
-
+    
     this.listner = this.props.firebase.auth.onAuthStateChanged(
       authUser => {
         if(authUser) {
           this.setState({ authUser });
-          this.props.firebase.getUserInfo(authUser)
-            .then((userDoc) => {
-              this.setState({
-                email: userDoc.email,
-              });
-            })
-            .catch(() => {
-              console.log('Something went wrong!');
-            })
         } else {
           this.setState({ authUser: null });
         }
       }
     );
+
+
+    console.log(this.props.data);
+
+    this.setState({
+      ...this.props.data,
+      commitMessage: "",
+      oldRefId: this.props.data.id,
+    });
 
   }
 
@@ -121,10 +125,9 @@ class UploadNewDialog extends React.Component {
       workRef.add({})
       .then((docRef) => {
         docRef.set({
-          name: this.state.title,
+          name: this.state.name,
           description: this.state.description,
-          branchName: "master",
-          parent: [{master: docRef.id}],
+          parent: this.state.parent.concat({[this.state.branchName]: docRef.id}),
           thumbnail: "gs://madcampjl.appspot.com/writingThumbnail.jpg",
           type: this.state.type,
           like: 0,
@@ -133,8 +136,8 @@ class UploadNewDialog extends React.Component {
           comments: [],
           forkedUsers: [],
           likedUsers: [],
-          owner: this.state.authUser.uid,
-          ownerName: this.state.email,
+          owner: this.state.owner,
+          ownerName: this.state.ownerName,
           date: (new Date()).getTime(),
           files: [this.state.writing],
         })
@@ -146,15 +149,26 @@ class UploadNewDialog extends React.Component {
           .then(()=>{
             console.log('User collection update success!');
 
-            treeRef.add({
+            treeRef.update({
               id: docRef.id,
-              branch: 'master',
+              branch: this.state.branchName,
               children: []
             })
+            
             .then(() => {
               console.log("Tree collection add success!");
-              this.handleClose();
-              window.location.reload();
+
+              workRef.doc(this.state.oldRefId).update({
+                isRecent: false,
+              })
+              .then(() => {
+                console.log("isRecent update success!");
+                this.handleClose();
+                window.location.reload();
+              })
+              .catch((error) => {
+                console.log(error);
+              })
             })
             .catch((error) => {
               console.log(error);
@@ -188,11 +202,12 @@ class UploadNewDialog extends React.Component {
         .then((downloadUrls) => {
           workRef.add({})
           .then((docRef) => {
+            console.log(this.state);
             docRef.set({
-              name: this.state.title,
+              name: this.state.name,
               description: this.state.description,
-              parent: {master: docRef.id},
-              thumbnail: downloadUrls[0],
+              parent: this.state.parent.concat({[this.state.branchName]: docRef.id}),
+              thumbnail: this.state.files[0],
               type: this.state.type,
               like: 0,
               isRecent: true,
@@ -200,10 +215,10 @@ class UploadNewDialog extends React.Component {
               comments: [],
               forkedUsers: [],
               likedUsers: [],
-              owner: this.state.authUser.uid,
-              ownerName: this.state.email,
+              owner: this.state.owner,
+              ownerName: this.state.ownerName,
               date: (new Date()).getTime(),
-              files: downloadUrls,
+              files: this.state.files.concat(downloadUrls),
             })
 
             .then(()=>{
@@ -221,8 +236,18 @@ class UploadNewDialog extends React.Component {
                 })
                 .then(() => {
                   console.log("Tree collection add success!");
-                  this.handleClose();
-                  window.location.reload();
+
+                  workRef.doc(this.state.oldRefId).update({
+                    isRecent: false,
+                  })
+                  .then(() => {
+                    console.log("isRecent update success!");
+                    this.handleClose();
+                    window.location.reload();
+                  })
+                  .catch((error) => {
+                    console.log(error);
+                  })
                 })
                 .catch((error) => {
                   console.log(error);
@@ -247,6 +272,14 @@ class UploadNewDialog extends React.Component {
     }
   }
 
+  getWriting = () => {
+    let literature = "";
+    this.state.files.forEach((writing) => {
+      literature += (writing + '\n');
+    })
+    return literature;
+  }
+
   handleNewFile = (acceptedFiles) => {
     this.setState({
       fileArray: acceptedFiles,
@@ -266,7 +299,8 @@ class UploadNewDialog extends React.Component {
               <Grid container spacing={24}>
                 <Grid item xs={8}>
                 <TextField
-                  name="title"
+                  name="name"
+                  defaultValue={this.state.name}
                   className={classes.uploadTitle}
                   onChange={this.handleChange}
                   id="input-with-icon-textfield"
@@ -372,15 +406,31 @@ class UploadNewDialog extends React.Component {
               multiline
               fullWidth
               rows="8"
+              defaultValue={this.getWriting()}
               onChange={this.handleChange}
               className={classes.writing}
               margin="normal"
               variant="outlined"
             /> :
-              <UploadDropzone onNewFile={this.handleNewFile}/>
+              <UploadDropzone fileUrls={this.state.files} onNewFile={this.handleNewFile}/>
             }
             
             
+            <Divider className={classes.divider}/>
+            
+            <TextField
+                name="branchName"
+                id="textfield-branchName"
+                label="Branch"
+                placeholder="Branch Name"
+                fullWidth
+                defaultValue={this.state.branchName}
+                onChange={this.handleChange}
+                className={classes.branchName}
+                margin="normal"
+                variant="outlined"
+              />
+
             <Divider className={classes.divider}/>
 
             <div>
@@ -391,6 +441,7 @@ class UploadNewDialog extends React.Component {
                 placeholder="Lovely work!"
                 multiline
                 fullWidth
+                defaultValue={this.state.description}
                 onChange={this.handleChange}
                 className={classes.description}
                 margin="normal"
@@ -417,9 +468,9 @@ class UploadNewDialog extends React.Component {
   }
 }
 
-UploadNewDialog.propTypes = {
+NewCommitDialog.propTypes = {
   classes: PropTypes.object.isRequired,
   onClose: PropTypes.func,
 };
 
-export default withFirebase(withStyles(uploadDialogStyle)(UploadNewDialog));
+export default withFirebase(withStyles(newCommitDialogStyle)(NewCommitDialog));

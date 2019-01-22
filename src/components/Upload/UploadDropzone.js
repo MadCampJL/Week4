@@ -1,6 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import Dropzone from 'react-dropzone';
+import { withFirebase } from '../Firebase';
 
 const baseStyle = {
   // width: 200,
@@ -24,9 +25,9 @@ const rejectStyle = {
 
 const INITIAL_STATE = {
   accepted: [],
-  rejected: []
+  rejected: [],
+  fileNameArray: [],
 };
-
 
 class UploadDropzone extends React.Component {
 
@@ -34,6 +35,20 @@ class UploadDropzone extends React.Component {
     super(props);
 
     this.state = { ...INITIAL_STATE };
+  }
+
+  componentDidMount() {
+    this.props.fileUrls.forEach((url) => {
+      this.props.firebase.storage
+        .refFromURL(url)
+        .getMetadata().then((metadata) => {
+          this.setState({
+            fileNameArray: this.state.fileNameArray.concat(metadata.name)
+          })
+        }).catch(function(error) {
+          console.log(error);
+        });
+    })
   }
 
   onDrop = (acceptedFiles, rejectedFiles) => {
@@ -55,9 +70,6 @@ class UploadDropzone extends React.Component {
       }
 
     });
-
-    
-
   }
 
   render() {
@@ -79,6 +91,9 @@ class UploadDropzone extends React.Component {
               {isDragAccept ? 'Drop' : 'Drag'} files here...
             </p>
             <div>
+              {this.state.fileNameArray.map(name => <li key={name}>{name}</li>)}
+            </div>
+            <div>
               {this.state.accepted.map(f => <li key={f.name}>{f.name} - {f.size} bytes</li>)}
             </div>
             {isDragReject && <div>Unsupported file type...</div>}
@@ -90,4 +105,4 @@ class UploadDropzone extends React.Component {
  }
 }
 
-export default UploadDropzone;
+export default withFirebase(UploadDropzone);
