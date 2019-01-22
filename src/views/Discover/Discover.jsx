@@ -1,12 +1,19 @@
 import React from "react";
 // @material-ui/core
 import ReactSwipe from "react-swipe";
+import SwipeableViews from 'react-swipeable-views';
 import dashboardStyle from "assets/jss/material-dashboard-react/views/dashboardStyle.jsx";
 import { withFirebase } from "../../components/Firebase";
 import { Select } from "@material-ui/core";
 import withStyles from "@material-ui/core/styles/withStyles";
-import Grid from '@material-ui/core/Grid';
+import Grid from "@material-ui/core/Grid";
+import Paper from "@material-ui/core/Paper";
+import WorkInfoNoDialog from "../../components/WorkInfo/WorkInfoNoDialog";
+import { autoPlay } from 'react-swipeable-views-utils';
 
+let workArray = [];
+
+const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
 const styles = theme => ({
   left: {
@@ -24,45 +31,90 @@ const styles = theme => ({
     width: "80%",
     border: "1px solid black",
     marginRight: "0px"
+  },
+  root: {
+    flexGrow: 1,
+  },
+  paper: {
+    padding: theme.spacing.unit * 2,
+    textAlign: "center",
+    color: theme.palette.text.secondary
   }
 });
 
 class Discover extends React.Component {
-  state = {};
+  state = {
+    loading: true,
+  };
+
+  componentDidMount() {
+    workArray = [];
+    const db = this.props.firebase.db;
+    db.collection("works")
+      .where("isRecent", "==", true)
+      .get()
+      .then(
+        function(querySnapshot) {
+          querySnapshot.forEach((doc) => {
+            let tempdata = doc.data();
+            tempdata.id = doc.id;
+            workArray.push(tempdata);
+            console.log(doc.id, " => ", tempdata);
+            this.setState({ loading: false });
+          });
+          // this.setState({ loading: false });
+        }.bind(this)
+      )
+      .catch(function(error) {
+        console.log("Error getting documents: ", error);
+      });
+    console.log(workArray);
+  }
 
   render() {
     const { classes } = this.props;
     let reactSwipeEl;
+    const workList = workArray.map(info => (
+      <div key={info.id}> 
+        <WorkInfoNoDialog
+          info={info}
+          key={info.id}
+        />
+      </div>
+    ));
+
     return (
-      <div class="row">
-        <div className={classes.left}>
-          <button onClick={() => reactSwipeEl.next()}>Next</button>
-        </div>
-        <div className={classes.centre}>
-          <ReactSwipe
-            className="carousel"
-            swipeOptions={{ continuous: false }}
-            ref={el => (reactSwipeEl = el)}
-          >
-            <div>
-              <img
-                src="https://i.kinja-img.com/gawker-media/image/upload/s--Q5Y8OMOm--/c_scale,f_auto,fl_progressive,q_80,w_800/mipwoljips0zpr3jocmm.jpg"
-                width="50%"
-              />
-            </div>
-            <div>
-              <img
-                src="http://media.comicbook.com/2016/04/ashpikachu2-179993.jpg"
-                width="50%"
-              />
-            </div>
-            <div>
-              <img src="http://i.imgur.com/DJY6Lz2.png" width="50%" />
-            </div>
-          </ReactSwipe>
-        </div>
-        <div className={classes.right}>
-          <button onClick={() => reactSwipeEl.prev()}>Prev</button>
+      <div>
+        <div className={classes.root}>
+          <Grid container spacing={24}>
+            <Grid item xs={2}>
+              {/* <Paper className={classes.paper}>
+                <button onClick={() => reactSwipeEl.prev()}>Prev</button>
+              </Paper> */}
+            </Grid>
+            <Grid item xs={8}>
+              <Paper className={classes.paper}>
+
+              <AutoPlaySwipeableViews interval={5000}>
+                { workList }
+              </AutoPlaySwipeableViews>
+                {/* <ReactSwipe
+                  className="carousel"
+                  swipeOptions={{ continuous: false }}
+                  ref={el => (reactSwipeEl = el)}
+                >
+                <div>
+                { workList }
+                </div>
+                </ReactSwipe> */}
+              </Paper>
+            </Grid>
+            <Grid item xs={2}>
+              {/* <Paper className={classes.paper}>
+                <button onClick={() => reactSwipeEl.next()}>Next</button>
+              </Paper> */}
+            </Grid>
+          </Grid>
         </div>
       </div>
     );
